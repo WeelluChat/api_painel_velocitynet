@@ -261,7 +261,7 @@ app.delete(
 
 ////////////////////////////////////////////////////// CANDIDATE ////////////////////////////////////////////////////////////////////
 
-app.get("/api/v1/candidate/get", 
+app.get("/api/v1/candidate/get",
 
   CandidateController.candidateGet);
 
@@ -270,7 +270,9 @@ app.post(
   upload.single("image"),
   CandidateController.CandidatePost
   //tiago
-);                   
+);
+
+app.post("/api/v1/candidate/delete", CandidateController.candidateDelete);
 
 ////////////////////////////////////////////////////  CANDIDATE  ///////////////////////////////////////////////////////////////////
 

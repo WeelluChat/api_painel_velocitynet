@@ -3,7 +3,7 @@ const CandidateModel = require("../models/Candidate");
 
 exports.candidateGet = async (req, res) => {
   const candidate = await CandidateModel.find();
-  
+
   try {
     res.status(200).json(candidate);
   } catch (error) {
@@ -12,7 +12,7 @@ exports.candidateGet = async (req, res) => {
 };
 
 exports.CandidatePost = async (req, res) => {
-  const { nome, dataNascimento, email, telefone,funcaoEsc, conteSobre_voce } = req.body;
+  const { nome, dataNascimento, email, telefone, funcaoEsc, conteSobre_voce } = req.body;
   const image = req.file ? req.file.filename : null;
   console.log(req.body);
 
@@ -34,6 +34,27 @@ exports.CandidatePost = async (req, res) => {
     res.status(500).json({ msg: "Error no servidor " });
   }
 };
+
+exports.candidateDelete = async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ msg: "ID obrigatório para deletar" });
+  }
+
+  try {
+    const deleted = await CandidateModel.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ msg: "Candidato não encontrado" });
+    }
+
+    res.status(200).json({ msg: "Candidato deletado com sucesso (via POST)" });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor ao deletar candidato" });
+  }
+};
+
 
 // exports.tvPatch = async (req, res) => {
 //   const { id, title, description, value } = req.body;

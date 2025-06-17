@@ -39,7 +39,7 @@ exports.authRegister = async (req, res) => {
 
   const user = new User({
     email,
-    password,
+    password: passwordHash,
   });
 
   try {
@@ -63,7 +63,7 @@ exports.authLogin = async (req, res) => {
   const checkPassword = await bcrypt.compare(password, user.password);
 
   if (!checkPassword) {
-    return res.status(422).json({ msg: "Senha inválida" });
+    return res.status(422).json({ msg: "Senha inválida(bcrypt.compare == false)" });
   }
 
   try {
