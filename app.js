@@ -34,6 +34,7 @@ const combosController = require("./src/controllers/combosController")
 const MontarController = require("./src/controllers/montarController")
 
 
+app.use('/uploads', express.static('uploads'));
 
 app.use(express.json());
 app.use(cors({
@@ -286,9 +287,18 @@ app.use('/api/v1', require('./src/controllers/emailControllers'));
 
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
 app.get("/api/v1/planos", MontarController.MontarGet);
-app.post("/api/v1/criarPlanos", upload.single("image"), MontarController.MontarPost);
-app.put("/api/v1/atualizarPlanos/:id", MontarController.MontarPut);
+app.post(
+  "/api/v1/criarPlanos",
+  MontarController.uploadFiles,
+  MontarController.MontarPost
+);
+app.put(
+  "/api/v1/atualizarPlanos/:id",
+  MontarController.uploadFiles,
+  MontarController.MontarPut
+);
 app.delete("/api/v1/deletarPlanos/:id", MontarController.MontarDelete);
+
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
 
 
