@@ -31,7 +31,9 @@ const RouterController = require("./src/controllers/routerController");
 const CandidateController = require("./src/controllers/CandidateController");
 const { combosImagesGet } = require("./src/controllers/combosController");
 const combosController = require("./src/controllers/combosController")
-const MontarController = require("./src/controllers/montarController")
+const MontarController = require("./src/controllers/montarComboController")
+const PerguntasController = require("./src/controllers/perguntasController")
+
 
 
 app.use('/uploads', express.static('uploads'));
@@ -286,20 +288,29 @@ app.use('/api/v1', require('./src/controllers/emailControllers'));
 ////////////////////////////////////////////////// email controllers ///////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
-app.get("/api/v1/planos", MontarController.MontarGet);
-app.post(
-  "/api/v1/criarPlanos",
-  MontarController.uploadFiles,
-  MontarController.MontarPost
-);
-app.put(
-  "/api/v1/atualizarPlanos/:id",
-  MontarController.uploadFiles,
-  MontarController.MontarPut
-);
-app.delete("/api/v1/deletarPlanos/:id", MontarController.MontarDelete);
+// app.get("/api/v1/planos", MontarController.MontarGet);
+// app.post(
+//   "/api/v1/criarPlanos",
+//   MontarController.uploadFiles,
+//   MontarController.MontarPost
+// );
+// app.put(
+//   "/api/v1/atualizarPlanos/:id",
+//   MontarController.uploadFiles,
+//   MontarController.MontarPut
+// );
+// app.delete("/api/v1/deletarPlanos/:id", MontarController.MontarDelete);
+
+app.get("/api/v1/planos", MontarController.CombosGet);
+app.post("/api/v1/criarPlanos", MontarController.CombosPost);
+app.put("/api/v1/atualizarPlanos/:id", MontarController.CombosPut);
 
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
+app.get("/api/v1/perguntas", PerguntasController.perguntasGet);
+app.post("/api/v1/criarPerguntas", PerguntasController.pergutasPost);
+//////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
 
 
 mongoose
