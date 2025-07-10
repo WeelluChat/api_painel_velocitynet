@@ -31,3 +31,13 @@ exports.perguntasDelete = async (req, res) => {
         res.status(500).json({ msg: "Error no servidor " });
     };
 };
+
+exports.perguntasPut = async (req, res) => {
+    const { id, title, subtitle } = req.body;
+    try {
+        await Perguntas.updateOne({ _id: id }, { $set: { title: title, subtitle: subtitle } });
+        res.status(200).json({ msg: "Pergunta atualizada com sucesso" });
+    } catch (error) {
+        res.status(500).json({ msg: "Error no servidor " });
+    };
+}

@@ -313,6 +313,7 @@ app.put("/api/v1/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
 app.get("/api/v1/perguntas", PerguntasController.perguntasGet);
 app.post("/api/v1/criarPerguntas", PerguntasController.pergutasPost);
 app.delete("/api/v1/deletarPerguntas/:id", PerguntasController.perguntasDelete);
+app.put("/api/v1/atualizarPerguntas/:id", PerguntasController.perguntasPut);
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
 
 
