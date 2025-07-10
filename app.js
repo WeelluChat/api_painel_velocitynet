@@ -300,16 +300,19 @@ app.use('/api/v1', require('./src/controllers/emailControllers'));
 //   MontarController.MontarPut
 // );
 // app.delete("/api/v1/deletarPlanos/:id", MontarController.MontarDelete);
-
 app.get("/api/v1/planos", MontarController.CombosGet);
 app.post("/api/v1/criarPlanos", MontarController.CombosPost);
 app.put("/api/v1/atualizarPlanos/:id", MontarController.CombosPut);
-
+app.delete("/api/v1/deletarPlanos/:id", MontarController.CombosDelete);
+app.put("/api/v1/atualizarPlano", MontarController.AtualizarPlanoViaBody);
+app.put("/api/v1/atualizarBeneficio", MontarController.AtualizarBeneficioViaBody);
+app.put("/api/v1/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
 app.get("/api/v1/perguntas", PerguntasController.perguntasGet);
 app.post("/api/v1/criarPerguntas", PerguntasController.pergutasPost);
+app.delete("/api/v1/deletarPerguntas/:id", PerguntasController.perguntasDelete);
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
 
 

@@ -14,7 +14,7 @@ const Beneficio = new mongoose.Schema({
     image: { type: String, required: true },
 });
 
-const Plano = new mongoose.Schema({
+const PlanoSchema = new mongoose.Schema({
     idCombo: String,
     nome: { type: String, required: true },
     isVisible: { type: Boolean, default: true },
@@ -24,4 +24,7 @@ const Plano = new mongoose.Schema({
     detalhes: [Detalhes],
 });
 
-module.exports = mongoose.model("Plano", Plano);
+module.exports = {
+    model: mongoose.model("Plano", PlanoSchema),
+    schema: PlanoSchema,
+};

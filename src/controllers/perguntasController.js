@@ -21,3 +21,13 @@ exports.pergutasPost = async (req, res) => {
         res.status(500).json({ msg: "Error no servidor " });
     };
 };
+
+exports.perguntasDelete = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await Perguntas.deleteOne({ _id: id });
+        res.status(200).json({ msg: "Pergunta deletada com sucesso" });
+    } catch (error) {
+        res.status(500).json({ msg: "Error no servidor " });
+    };
+};
