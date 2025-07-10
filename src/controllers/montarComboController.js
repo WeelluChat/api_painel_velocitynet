@@ -1,10 +1,11 @@
-const Planos = require("../models/montarCombos");
+const Combo = require("../models/montarCombos");
+const Plano = require("../models/montarPlanos"); // importante: plano separado se for referenciado
 
 // GET all combos
 exports.CombosGet = async (req, res) => {
     try {
-        const getPlanos = await Planos.find();
-        res.send(getPlanos);
+        const combos = await Combo.find().populate("planos"); // Populate para retornar os dados completos dos planos
+        res.send(combos);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -13,30 +14,30 @@ exports.CombosGet = async (req, res) => {
 // POST new combo
 exports.CombosPost = async (req, res) => {
     try {
-        const novoPlano = new Planos({
+        const novoCombo = new Combo({
             title: req.body.title,
             isVisible: req.body.isVisible,
-            planos: req.body.planos,
+            planos: req.body.planos, // Array de ObjectId de planos
         });
 
-        await novoPlano.save();
-        res.status(201).send(novoPlano);
+        await novoCombo.save();
+        res.status(201).send(novoCombo);
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });
     }
 };
 
-// PUT combo completo (parcial ou total)
+// PUT combo completo
 exports.CombosPut = async (req, res) => {
     try {
-        const updateCombo = await Planos.findByIdAndUpdate(
+        const comboAtualizado = await Combo.findByIdAndUpdate(
             req.params.id,
             { $set: req.body },
             { new: true, runValidators: true }
         );
 
-        res.send(updateCombo);
+        res.send(comboAtualizado);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -45,30 +46,25 @@ exports.CombosPut = async (req, res) => {
 // DELETE combo
 exports.CombosDelete = async (req, res) => {
     try {
-        const deleteCombo = await Planos.findByIdAndDelete(req.params.id);
-        res.send(deleteCombo);
+        const comboDeletado = await Combo.findByIdAndDelete(req.params.id);
+        res.send(comboDeletado);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 };
 
-// ----------- ATUALIZAÇÕES VIA ID NO BODY ------------
-
 // Atualizar plano via IDs no body
 exports.AtualizarPlanoViaBody = async (req, res) => {
     try {
-        const { comboId, planoId, ...updateData } = req.body;
+        const { planoId, ...updateData } = req.body;
 
-        const combo = await Planos.findById(comboId);
-        if (!combo) return res.status(404).send({ message: "Combo não encontrado" });
-
-        const plano = combo.planos.id(planoId);
+        const plano = await Plano.findById(planoId);
         if (!plano) return res.status(404).send({ message: "Plano não encontrado" });
 
         Object.assign(plano, updateData);
 
-        await combo.save();
-        res.send(combo);
+        await plano.save();
+        res.send(plano);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -77,12 +73,9 @@ exports.AtualizarPlanoViaBody = async (req, res) => {
 // Atualizar benefício via IDs no body
 exports.AtualizarBeneficioViaBody = async (req, res) => {
     try {
-        const { comboId, planoId, beneficioId, ...updateData } = req.body;
+        const { planoId, beneficioId, ...updateData } = req.body;
 
-        const combo = await Planos.findById(comboId);
-        if (!combo) return res.status(404).send({ message: "Combo não encontrado" });
-
-        const plano = combo.planos.id(planoId);
+        const plano = await Plano.findById(planoId);
         if (!plano) return res.status(404).send({ message: "Plano não encontrado" });
 
         const beneficio = plano.beneficios.id(beneficioId);
@@ -90,8 +83,8 @@ exports.AtualizarBeneficioViaBody = async (req, res) => {
 
         Object.assign(beneficio, updateData);
 
-        await combo.save();
-        res.send(combo);
+        await plano.save();
+        res.send(plano);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
@@ -100,12 +93,9 @@ exports.AtualizarBeneficioViaBody = async (req, res) => {
 // Atualizar detalhe via IDs no body
 exports.AtualizarDetalheViaBody = async (req, res) => {
     try {
-        const { comboId, planoId, detalheId, ...updateData } = req.body;
+        const { planoId, detalheId, ...updateData } = req.body;
 
-        const combo = await Planos.findById(comboId);
-        if (!combo) return res.status(404).send({ message: "Combo não encontrado" });
-
-        const plano = combo.planos.id(planoId);
+        const plano = await Plano.findById(planoId);
         if (!plano) return res.status(404).send({ message: "Plano não encontrado" });
 
         const detalhe = plano.detalhes.id(detalheId);
@@ -113,8 +103,8 @@ exports.AtualizarDetalheViaBody = async (req, res) => {
 
         Object.assign(detalhe, updateData);
 
-        await combo.save();
-        res.send(combo);
+        await plano.save();
+        res.send(plano);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
