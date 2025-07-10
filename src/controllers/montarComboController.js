@@ -90,7 +90,6 @@ exports.AtualizarBeneficioViaBody = async (req, res) => {
     }
 };
 
-// Atualizar detalhe via IDs no body
 exports.AtualizarDetalheViaBody = async (req, res) => {
     try {
         const { planoId, detalheId, ...updateData } = req.body;
