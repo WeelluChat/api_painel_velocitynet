@@ -24,7 +24,4 @@ const PlanoSchema = new mongoose.Schema({
     detalhes: [Detalhes],
 });
 
-module.exports = {
-    model: mongoose.model("Plano", PlanoSchema),
-    schema: PlanoSchema,
-};
+module.exports = mongoose.model("Plano", PlanoSchema); 
