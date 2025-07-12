@@ -5,25 +5,18 @@ const CategoryPlan = mongoose.model("category_plan", {
   nome: String,
   logo: String,
   isVisible: {
-    default: true,
-    type: Boolean,
-  },
-  subTitulo: {
-    default: null,
-    type: String,
-  },
-  visualizacao: String,
-  status: {
     type: Boolean,
     default: true,
   },
-  images: {
-    type: Schema.Types.Array,
-    isVisible: {
-      default: true,
-      type: Boolean,
+  images: [
+    {
+      filename: String,
+      isVisible: {
+        type: Boolean,
+        default: true,
+      },
     },
-  },
+  ],
 });
 
 module.exports = CategoryPlan;

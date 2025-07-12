@@ -190,43 +190,34 @@ app.delete(
 ////////////////////////ADDITIONAL//////////////////////// ADDITIONAL ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////////////////////
-app.get(
-  "/api/v1/category-plan",
-  // checkToken,
-  categoryPlanController.categoryPlanGet
-);
+app.get("/api/v1/category-plan", categoryPlanController.categoryPlanGet);
 
 app.post(
   "/api/v1/category-plan/create",
-  checkToken,
-  upload.single("image"),
+  categoryPlanController.uploadCategoryFields,
   categoryPlanController.categoryPlanCreate
 );
 
 app.patch(
   "/api/v1/category-plan/patch",
-  checkToken,
-  upload.single("image"),
+  categoryPlanController.uploadLogoOnly,
   categoryPlanController.categoryPlanPatch
 );
 
 app.patch(
   "/api/v1/category-plan/create-card",
-  checkToken,
-  uploadArray.array("images"),
+  categoryPlanController.uploadImagesOnly,
   categoryPlanController.categoryPlanCreateCard
 );
 
 app.delete(
-  "/api/v1/category-plan/delete-card",
-  checkToken,
-  categoryPlanController.categoryPlanDeleteCard
+  "/api/v1/category-plan/delete",
+  categoryPlanController.categoryPlanDelete
 );
 
 app.delete(
-  "/api/v1/category-plan/delete",
-  checkToken,
-  categoryPlanController.categoryPlanDelete
+  "/api/v1/category-plan/delete-card",
+  categoryPlanController.categoryPlanDeleteCard
 );
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////
 
