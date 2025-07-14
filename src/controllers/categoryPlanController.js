@@ -3,11 +3,10 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// === Configuração interna do multer ===
+// === Configuração do multer ===
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = "uploads/category";
-    // Cria a pasta caso não exista
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
@@ -16,19 +15,14 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
-
 const upload = multer({ storage });
 
-// Middleware para upload de logo e images juntos
+// === Middlewares de upload ===
 exports.uploadCategoryFields = upload.fields([
   { name: "logo", maxCount: 1 },
   { name: "images", maxCount: 10 },
 ]);
-
-// Middleware para upload só do logo
 exports.uploadLogoOnly = upload.single("logo");
-
-// Middleware para upload só das images
 exports.uploadImagesOnly = upload.array("images", 10);
 
 // === Controllers ===
@@ -43,7 +37,7 @@ exports.categoryPlanGet = async (req, res) => {
   }
 };
 
-// POST - Criar nova categoria com logo e imagens
+// POST - Criar nova categoria
 exports.categoryPlanCreate = async (req, res) => {
   const { nome, visualizacao, isVisible } = req.body;
 
@@ -71,9 +65,10 @@ exports.categoryPlanCreate = async (req, res) => {
   }
 };
 
-// PATCH - Atualizar dados da categoria e (opcionalmente) o logo
+// PATCH - Atualizar categoria por ID via params
 exports.categoryPlanPatch = async (req, res) => {
-  const { id, nome, visualizacao, isVisible } = req.body;
+  const { id } = req.params;
+  const { nome, visualizacao, isVisible } = req.body;
   const logo = req.file?.filename;
 
   const updateFields = {};
@@ -90,7 +85,7 @@ exports.categoryPlanPatch = async (req, res) => {
   }
 };
 
-// PATCH - Adicionar novas imagens (cards)
+// PATCH - Adicionar novas imagens a uma categoria
 exports.categoryPlanCreateCard = async (req, res) => {
   const { idCategory } = req.body;
   const files = req.files;
@@ -116,23 +111,54 @@ exports.categoryPlanCreateCard = async (req, res) => {
   }
 };
 
-// DELETE - Deletar categoria
+// DELETE - Deletar categoria por ID com remoção de arquivos
 exports.categoryPlanDelete = async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.params;
 
   try {
+    const category = await CategoryPlan.findById(id);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Categoria não encontrada." });
+    }
+
+    if (category.logo) {
+      const logoPath = path.join("uploads/category", category.logo);
+      if (fs.existsSync(logoPath)) {
+        fs.unlinkSync(logoPath);
+      }
+    }
+
+    for (const image of category.images) {
+      const imagePath = path.join("uploads/category", image.filename);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
     await CategoryPlan.deleteOne({ _id: id });
-    res.status(200).json({ msg: "Categoria deletada com sucesso!" });
+
+    res.status(200).json({ msg: "Categoria e arquivos deletados com sucesso!" });
   } catch (error) {
     res.status(500).json({ msg: "Erro ao deletar categoria", error: error.message });
   }
 };
 
-// DELETE - Remover imagem específica da categoria
+// DELETE - Remover imagem específica (card) por ID e nome via params
 exports.categoryPlanDeleteCard = async (req, res) => {
-  const { cardName, idCategory } = req.body;
+  const { idCategory, cardName } = req.params;
 
   try {
+    const category = await CategoryPlan.findById(idCategory);
+    if (!category) {
+      return res.status(404).json({ msg: "Categoria não encontrada." });
+    }
+
+    const imagePath = path.join("uploads/category", cardName);
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
     await CategoryPlan.updateOne(
       { _id: idCategory },
       { $pull: { images: { filename: cardName } } }

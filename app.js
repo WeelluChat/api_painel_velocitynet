@@ -190,35 +190,18 @@ app.delete(
 ////////////////////////ADDITIONAL//////////////////////// ADDITIONAL ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////////////////////
+// GET e POST
 app.get("/api/v1/category-plan", categoryPlanController.categoryPlanGet);
+app.post("/api/v1/category-plan/create", categoryPlanController.uploadCategoryFields, categoryPlanController.categoryPlanCreate);
 
-app.post(
-  "/api/v1/category-plan/create",
-  categoryPlanController.uploadCategoryFields,
-  categoryPlanController.categoryPlanCreate
-);
+// PATCH com params
+app.patch("/api/v1/category-plan/patch/:id", categoryPlanController.uploadLogoOnly, categoryPlanController.categoryPlanPatch);
+app.patch("/api/v1/category-plan/create-card", categoryPlanController.uploadImagesOnly, categoryPlanController.categoryPlanCreateCard);
 
-app.patch(
-  "/api/v1/category-plan/patch",
-  categoryPlanController.uploadLogoOnly,
-  categoryPlanController.categoryPlanPatch
-);
+// DELETE com params
+app.delete("/api/v1/category-plan/delete/:id", categoryPlanController.categoryPlanDelete);
+app.delete("/api/v1/category-plan/delete-card/:idCategory/:cardName", categoryPlanController.categoryPlanDeleteCard);
 
-app.patch(
-  "/api/v1/category-plan/create-card",
-  categoryPlanController.uploadImagesOnly,
-  categoryPlanController.categoryPlanCreateCard
-);
-
-app.delete(
-  "/api/v1/category-plan/delete",
-  categoryPlanController.categoryPlanDelete
-);
-
-app.delete(
-  "/api/v1/category-plan/delete-card",
-  categoryPlanController.categoryPlanDeleteCard
-);
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////
 
 // ///////////////////////////////////////////////// ROUTER ///////////////////////////////////////////////////////////
