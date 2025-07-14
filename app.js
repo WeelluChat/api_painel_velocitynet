@@ -281,6 +281,7 @@ app.delete("/api/v1/deletarPlanos/:id", MontarController.CombosDelete);
 app.put("/api/v1/atualizarPlano", MontarController.AtualizarPlanoViaBody);
 app.put("/api/v1/atualizarBeneficio", MontarController.AtualizarBeneficioViaBody);
 app.put("/api/v1/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
+app.put("/api/v1/beneficioImage", MontarController.AtualizarImagemBeneficio);
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
