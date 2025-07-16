@@ -61,19 +61,28 @@ app.delete('/api/v1/combos/:id', combosController.combosImagesDelete)
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
 app.get("/api/v1/slider", sliderController.sliderGet);
 app.get("/api/v1/slider-all", sliderController.sliderGetAll);
+
 app.post(
   "/api/v1/slider",
   checkToken,
-  upload.single("image"),
+  upload.fields([
+    { name: "desktop", maxCount: 1 },
+    { name: "mobile", maxCount: 1 },
+  ]),
   sliderController.sliderPost
 );
-app.delete("/api/v1/slider", checkToken, sliderController.sliderDelete);
+
 app.patch(
   "/api/v1/slider",
   checkToken,
-  upload.single("image"),
+  upload.fields([
+    { name: "desktop", maxCount: 1 },
+    { name: "mobile", maxCount: 1 },
+  ]),
   sliderController.sliderPatch
 );
+
+app.delete("/api/v1/slider", checkToken, sliderController.sliderDelete);
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////////////
