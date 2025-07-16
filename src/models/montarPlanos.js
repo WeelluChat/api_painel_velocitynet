@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Detalhes = new mongoose.Schema({
     idCombo: String,
     text: { type: String, required: true },
-    icon: { type: String, required: true },
+    icon: { type: Number, required: true },
 });
 
 const Beneficio = new mongoose.Schema({
