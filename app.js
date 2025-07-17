@@ -66,8 +66,8 @@ app.post(
   "/api/v1/slider",
   // checkToken,
   upload.fields([
-    { name: "desktop", maxCount: 1 },
-    { name: "mobile", maxCount: 1 },
+    { name: "desktop", maxCount: 5 },
+    { name: "mobile", maxCount: 5 },
   ]),
   sliderController.sliderPost
 );
@@ -76,8 +76,8 @@ app.patch(
   "/api/v1/slider",
   // checkToken,
   upload.fields([
-    { name: "desktop", maxCount: 1 },
-    { name: "mobile", maxCount: 1 },
+    { name: "desktop", maxCount: 5 },
+    { name: "mobile", maxCount: 5 },
   ]),
   sliderController.sliderPatch
 );
