@@ -62,7 +62,7 @@ exports.sliderPost = async (req, res) => {
         dateSlider: currentDate,
       },
     });
-
+    //op
     await slider.save();
     res.status(200).json({ msg: "Slider salvo com sucesso" });
   } catch (error) {
