@@ -24,7 +24,6 @@ exports.sliderGet = async (req, res) => {
   }
 };
 
-// GET todos os sliders
 exports.sliderGetAll = async (req, res) => {
   try {
     const slider = await Slider.find({});
@@ -42,11 +41,13 @@ exports.sliderGetAll = async (req, res) => {
 // POST novo slider (espera 2 arquivos: desktop e mobile)
 exports.sliderPost = async (req, res) => {
   try {
+    console.log('req.files:', req.files);
+
     const desktop = req.files?.desktop?.[0];
     const mobile = req.files?.mobile?.[0];
 
     if (!desktop || !mobile) {
-      return res.status(422).json({ msg: "Arquivos inválidos" });
+      return res.status(422).json({ msg: "Arquivos inválidos ou ausentes" });
     }
 
     const currentDate = new Date().toLocaleDateString("pt-BR");
@@ -65,9 +66,14 @@ exports.sliderPost = async (req, res) => {
     await slider.save();
     res.status(200).json({ msg: "Slider salvo com sucesso" });
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao salvar slider", error });
+    console.error("Erro ao salvar slider:", error);
+    res.status(500).json({
+      msg: "Erro ao salvar slider",
+      error: error.message || error.toString(),
+    });
   }
 };
+
 
 // PATCH atualização
 exports.sliderPatch = async (req, res) => {

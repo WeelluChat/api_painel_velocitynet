@@ -64,7 +64,7 @@ app.get("/api/v1/slider-all", sliderController.sliderGetAll);
 
 app.post(
   "/api/v1/slider",
-  checkToken,
+  // checkToken,
   upload.fields([
     { name: "desktop", maxCount: 1 },
     { name: "mobile", maxCount: 1 },
@@ -74,7 +74,7 @@ app.post(
 
 app.patch(
   "/api/v1/slider",
-  checkToken,
+  // checkToken,
   upload.fields([
     { name: "desktop", maxCount: 1 },
     { name: "mobile", maxCount: 1 },

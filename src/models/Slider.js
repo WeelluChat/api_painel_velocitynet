@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Slider = mongoose.Schema({
+const SliderSchema = new mongoose.Schema({
   desktop: {
     name: String,
     dateSlider: String,
@@ -10,5 +10,7 @@ const Slider = mongoose.Schema({
     dateSlider: String,
   },
 });
+
+const Slider = mongoose.model("slider", SliderSchema);
 
 module.exports = Slider;
