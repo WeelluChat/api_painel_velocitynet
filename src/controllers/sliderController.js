@@ -1,6 +1,28 @@
 const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
 const Slider = require("../models/Slider");
+
+// Configuração do multer diretamente no controller
+const uploadPath = path.join(__dirname, "..", "..", "uploads");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    const uniqueName = `${file.fieldname}-${Date.now()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage });
+
+exports.sliderUpload = upload.fields([
+  { name: "desktop", maxCount: 1 },
+  { name: "mobile", maxCount: 1 },
+]);
 
 // GET sliders válidos a partir da data atual
 exports.sliderGet = async (req, res) => {
@@ -10,8 +32,8 @@ exports.sliderGet = async (req, res) => {
     const slider = await Slider.find({
       $or: [
         { "desktop.dateSlider": { $gte: currentDate } },
-        { "mobile.dateSlider": { $gte: currentDate } }
-      ]
+        { "mobile.dateSlider": { $gte: currentDate } },
+      ],
     });
 
     if (slider.length === 0) {
@@ -41,8 +63,6 @@ exports.sliderGetAll = async (req, res) => {
 // POST novo slider (espera 2 arquivos: desktop e mobile)
 exports.sliderPost = async (req, res) => {
   try {
-    console.log('req.files:', req.files);
-
     const desktop = req.files?.desktop?.[0];
     const mobile = req.files?.mobile?.[0];
 
@@ -62,7 +82,7 @@ exports.sliderPost = async (req, res) => {
         dateSlider: currentDate,
       },
     });
-    //op
+
     await slider.save();
     res.status(200).json({ msg: "Slider salvo com sucesso" });
   } catch (error) {
@@ -73,7 +93,6 @@ exports.sliderPost = async (req, res) => {
     });
   }
 };
-
 
 // PATCH atualização
 exports.sliderPatch = async (req, res) => {
@@ -112,10 +131,8 @@ exports.sliderDelete = async (req, res) => {
 
 // Ver imagem
 exports.verArquivo = async (req, res) => {
-  const pastaUploads = path.join(__dirname, "..", "..", "uploads");
   const nomeDoArquivo = req.params.nomeDoArquivo;
-
-  const caminhoDoArquivo = path.join(pastaUploads, nomeDoArquivo);
+  const caminhoDoArquivo = path.join(uploadPath, nomeDoArquivo);
 
   fs.access(caminhoDoArquivo, fs.constants.F_OK, (err) => {
     if (err) {

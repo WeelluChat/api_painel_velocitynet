@@ -65,24 +65,20 @@ app.get("/api/v1/slider-all", sliderController.sliderGetAll);
 app.post(
   "/api/v1/slider",
   // checkToken,
-  upload.fields([
-    { name: "desktop", maxCount: 5 },
-    { name: "mobile", maxCount: 5 },
-  ]),
+  sliderController.sliderUpload,
   sliderController.sliderPost
 );
 
 app.patch(
   "/api/v1/slider",
   // checkToken,
-  upload.fields([
-    { name: "desktop", maxCount: 5 },
-    { name: "mobile", maxCount: 5 },
-  ]),
+  sliderController.sliderUpload,
   sliderController.sliderPatch
 );
 
 app.delete("/api/v1/slider", checkToken, sliderController.sliderDelete);
+
+app.get("/api/v1/slider/view/:nomeDoArquivo", sliderController.verArquivo);
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////////////
