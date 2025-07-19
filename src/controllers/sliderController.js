@@ -1,66 +1,43 @@
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const mongoose = require("mongoose");
 const Slider = require("../models/Slider");
 
-// Configuração do multer diretamente no controller
+// Caminho para salvar imagens
 const uploadPath = path.join(__dirname, "..", "..", "uploads");
 
+// Configuração do multer
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath);
-  },
-  filename: function (req, file, cb) {
+  destination: (req, file, cb) => cb(null, uploadPath),
+  filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     const uniqueName = `${file.fieldname}-${Date.now()}${ext}`;
     cb(null, uniqueName);
   },
 });
 
-const upload = multer({ storage, limits: { fileSize: 200 * 1024 * 1024 } });
+const upload = multer({
+  storage,
+  limits: { fileSize: 200 * 1024 * 1024 },
+});
 
 exports.sliderUpload = upload.fields([
   { name: "desktop", maxCount: 1 },
   { name: "mobile", maxCount: 1 },
 ]);
 
-// GET sliders válidos a partir da data atual
+// GET todos os sliders
 exports.sliderGet = async (req, res) => {
   try {
-    const currentDate = new Date().toLocaleDateString("pt-BR");
-
-    const slider = await Slider.find({
-      $or: [
-        { "desktop.dateSlider": { $gte: currentDate } },
-        { "mobile.dateSlider": { $gte: currentDate } },
-      ],
-    });
-
-    if (slider.length === 0) {
-      res.status(204).json({ msg: "Lista vazia" });
-    } else {
-      res.status(200).json(slider);
-    }
+    const sliders = await Slider.find({});
+    res.status(200).json(sliders);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ msg: "Erro ao buscar sliders", error });
   }
 };
 
-exports.sliderGetAll = async (req, res) => {
-  try {
-    const slider = await Slider.find({});
-
-    if (slider.length === 0) {
-      res.status(204).json({ msg: "Lista vazia" });
-    } else {
-      res.status(200).json(slider);
-    }
-  } catch (error) {
-    res.status(500).json({ msg: "Erro no servidor" });
-  }
-};
-
-// POST novo slider (espera 2 arquivos: desktop e mobile)
+// POST - criar novo slider
 exports.sliderPost = async (req, res) => {
   try {
     const desktop = req.files?.desktop?.[0];
@@ -70,33 +47,29 @@ exports.sliderPost = async (req, res) => {
       return res.status(422).json({ msg: "Arquivos inválidos ou ausentes" });
     }
 
-    const currentDate = new Date().toLocaleDateString("pt-BR");
-
     const slider = new Slider({
       desktop: {
         name: desktop.filename,
-        dateSlider: currentDate,
       },
       mobile: {
         name: mobile.filename,
-        dateSlider: currentDate,
       },
     });
 
     await slider.save();
     res.status(200).json({ msg: "Slider salvo com sucesso" });
   } catch (error) {
-    console.error("Erro ao salvar slider:", error);
-    res.status(500).json({
-      msg: "Erro ao salvar slider",
-      error: error.message || error.toString(),
-    });
+    res.status(500).json({ msg: "Erro ao salvar slider", error: error.message });
   }
 };
 
-// PATCH atualização
+// PATCH - atualizar slider
 exports.sliderPatch = async (req, res) => {
-  const { id, dateDesktop, dateMobile } = req.body;
+  const { id } = req.body;
+
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ msg: "ID inválido" });
+  }
 
   try {
     const updateFields = {};
@@ -104,41 +77,55 @@ exports.sliderPatch = async (req, res) => {
     if (req.files?.desktop?.[0]) {
       updateFields["desktop.name"] = req.files.desktop[0].filename;
     }
+
     if (req.files?.mobile?.[0]) {
       updateFields["mobile.name"] = req.files.mobile[0].filename;
     }
 
-    if (dateDesktop) updateFields["desktop.dateSlider"] = dateDesktop;
-    if (dateMobile) updateFields["mobile.dateSlider"] = dateMobile;
-
     await Slider.updateOne({ _id: id }, { $set: updateFields });
     res.status(200).json({ msg: "Slider atualizado com sucesso" });
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao atualizar slider" });
+    res.status(500).json({ msg: "Erro ao atualizar slider", error: error.message });
   }
 };
 
-// DELETE slider
+// DELETE - remover slider + arquivos
 exports.sliderDelete = async (req, res) => {
   const { id } = req.body;
+
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ msg: "ID inválido" });
+  }
+
   try {
+    const slider = await Slider.findById(id);
+    if (!slider) {
+      return res.status(404).json({ msg: "Slider não encontrado" });
+    }
+
+    // Remove os arquivos
+    const arquivos = [slider.desktop.name, slider.mobile.name];
+    arquivos.forEach((nome) => {
+      const caminho = path.join(uploadPath, nome);
+      fs.promises.unlink(caminho).catch(() => {});
+    });
+
     await Slider.deleteOne({ _id: id });
     res.status(200).json({ msg: "Slider deletado com sucesso" });
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao deletar slider" });
+    res.status(500).json({ msg: "Erro ao deletar slider", error: error.message });
   }
 };
 
-// Ver imagem
+// GET - ver imagem
 exports.verArquivo = async (req, res) => {
-  const nomeDoArquivo = req.params.nomeDoArquivo;
-  const caminhoDoArquivo = path.join(uploadPath, nomeDoArquivo);
+  try {
+    const nomeDoArquivo = req.params.nomeDoArquivo;
+    const caminhoDoArquivo = path.join(uploadPath, nomeDoArquivo);
 
-  fs.access(caminhoDoArquivo, fs.constants.F_OK, (err) => {
-    if (err) {
-      return res.status(404).send("Imagem não encontrada");
-    }
-
+    await fs.promises.access(caminhoDoArquivo, fs.constants.F_OK);
     res.sendFile(caminhoDoArquivo);
-  });
+  } catch {
+    res.status(404).send("Imagem não encontrada");
+  }
 };

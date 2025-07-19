@@ -33,6 +33,7 @@ const { combosImagesGet } = require("./src/controllers/combosController");
 const combosController = require("./src/controllers/combosController")
 const MontarController = require("./src/controllers/montarComboController")
 const PerguntasController = require("./src/controllers/perguntasController")
+const CardsPlanos = require("./src/controllers/CardsController")
 
 
 
@@ -59,26 +60,13 @@ app.delete('/api/v1/combos/:id', combosController.combosImagesDelete)
 ////////////////////////////////////////////////// COMBOS ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
-app.get("/api/v1/slider", sliderController.sliderGet);
-app.get("/api/v1/slider-all", sliderController.sliderGetAll);
 
-app.post(
-  "/api/v1/slider",
-  // checkToken,
-  sliderController.sliderUpload,
-  sliderController.sliderPost
-);
-
-app.patch(
-  "/api/v1/slider",
-  // checkToken,
-  sliderController.sliderUpload,
-  sliderController.sliderPatch
-);
-
-app.delete("/api/v1/slider", checkToken, sliderController.sliderDelete);
-
+app.get("/api/v1/slider", sliderController.sliderGet); // agora retorna todos
+app.post("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPost);
+app.patch("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPatch);
+app.delete("/api/v1/sliderDelete", sliderController.sliderDelete);
 app.get("/api/v1/slider/view/:nomeDoArquivo", sliderController.verArquivo);
+
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////////////
@@ -295,6 +283,14 @@ app.post("/api/v1/criarPerguntas", PerguntasController.pergutasPost);
 app.delete("/api/v1/deletarPerguntas/:id", PerguntasController.perguntasDelete);
 app.put("/api/v1/atualizarPerguntas/:id", PerguntasController.perguntasPut);
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////// CARDS PLANOS ////////////////////////////////////////////////////////////////////////////
+app.get("/api/v1/cards", CardsPlanos.CardsGet);
+app.post("/api/v1/cards", CardsPlanos.CardsPost);
+app.delete("/api/v1/cards/:id", CardsPlanos.CardsDelete);
+app.put("/api/v1/cards/:id", CardsPlanos.CardsPut);
+app.patch("/api/v1/cards", CardsPlanos.CardsPatch);
+///////////////////////////////////////////////// CARDS PLANOS ////////////////////////////////////////////////////////////////////////////
 
 
 mongoose
