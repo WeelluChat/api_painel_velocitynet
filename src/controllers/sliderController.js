@@ -103,19 +103,31 @@ exports.sliderDelete = async (req, res) => {
       return res.status(404).json({ msg: "Slider não encontrado" });
     }
 
-    // Remove os arquivos
-    const arquivos = [slider.desktop.name, slider.mobile.name];
-    arquivos.forEach((nome) => {
-      const caminho = path.join(uploadPath, nome);
-      fs.promises.unlink(caminho).catch(() => {});
-    });
+    // Remove os arquivos associados
+    const arquivos = [slider.desktop?.name, slider.mobile?.name];
 
+    for (const nome of arquivos) {
+      if (nome) {
+        const caminho = path.join(uploadPath, nome);
+        try {
+          await fs.promises.access(caminho, fs.constants.F_OK);
+          await fs.promises.unlink(caminho);
+        } catch (err) {
+          console.warn(`Erro ao excluir arquivo: ${nome}`, err.message);
+        }
+      }
+    }
+
+    // Remove do banco
     await Slider.deleteOne({ _id: id });
+
     res.status(200).json({ msg: "Slider deletado com sucesso" });
   } catch (error) {
+    console.error("Erro no delete:", error);
     res.status(500).json({ msg: "Erro ao deletar slider", error: error.message });
   }
 };
+
 
 // GET - ver imagem
 exports.verArquivo = async (req, res) => {

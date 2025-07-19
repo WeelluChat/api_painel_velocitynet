@@ -64,7 +64,7 @@ app.delete('/api/v1/combos/:id', combosController.combosImagesDelete)
 app.get("/api/v1/slider", sliderController.sliderGet); // agora retorna todos
 app.post("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPost);
 app.patch("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPatch);
-app.delete("/api/v1/sliderDelete", sliderController.sliderDelete);
+app.delete("/api/v1/slider", sliderController.sliderDelete);
 app.get("/api/v1/slider/view/:nomeDoArquivo", sliderController.verArquivo);
 
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
