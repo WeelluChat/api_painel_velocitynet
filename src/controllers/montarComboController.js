@@ -16,7 +16,6 @@ exports.CombosPost = async (req, res) => {
         const { title, isVisible, planos } = req.body;
 
         const novoCombo = new Combo({
-            icon,
             title,
             isVisible,
             planos: Array.isArray(planos) ? planos : [],
