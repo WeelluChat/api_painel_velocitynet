@@ -275,6 +275,7 @@ app.put("/api/v1/atualizarPlano", MontarController.AtualizarPlanoViaBody);
 app.put("/api/v1/atualizarBeneficio", MontarController.AtualizarBeneficioViaBody);
 app.put("/api/v1/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
 app.put("/api/v1/beneficioImage", MontarController.AtualizarImagemBeneficio);
+app.patch("/api/v1/adicionarPlano", MontarController.AdicionarPlanoAoCombo);
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////// PERGUNTAS /////////////////////////////////////////////////////////////////////////////

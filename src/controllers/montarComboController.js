@@ -158,3 +158,31 @@ exports.AtualizarImagemBeneficio = async (req, res) => {
         });
     }
 };
+
+// PATCH adicionar plano ao combo
+exports.AdicionarPlanoAoCombo = async (req, res) => {
+    try {
+        const { comboId, novoPlano } = req.body;
+
+        if (!comboId || !novoPlano) {
+            return res.status(400).send({ message: "comboId e novoPlano são obrigatórios" });
+        }
+
+        const combo = await Combo.findById(comboId);
+        if (!combo) {
+            return res.status(404).send({ message: "Combo não encontrado" });
+        }
+
+        combo.planos.push(novoPlano);
+        await combo.save();
+
+        res.status(200).send({
+            message: "Plano adicionado com sucesso",
+            comboAtualizado: combo
+        });
+
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
