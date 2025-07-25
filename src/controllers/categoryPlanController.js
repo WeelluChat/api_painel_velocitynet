@@ -20,7 +20,7 @@ const upload = multer({ storage });
 // === Middlewares de upload ===
 exports.uploadCategoryFields = upload.fields([
   { name: "logo", maxCount: 1 },
-  { name: "images", maxCount: 10 },
+  { name: "images" },
 ]);
 exports.uploadLogoOnly = upload.single("logo");
 exports.uploadImagesOnly = upload.array("images", 10);
@@ -112,6 +112,7 @@ exports.categoryPlanCreateCard = async (req, res) => {
 };
 
 // DELETE - Deletar categoria por ID com remoção de arquivos
+// DELETE - Deletar uma categoria por ID e remover todos os arquivos associados
 exports.categoryPlanDelete = async (req, res) => {
   const { id } = req.params;
 
@@ -122,6 +123,7 @@ exports.categoryPlanDelete = async (req, res) => {
       return res.status(404).json({ msg: "Categoria não encontrada." });
     }
 
+    // Deleta o logo, se existir
     if (category.logo) {
       const logoPath = path.join("uploads/category", category.logo);
       if (fs.existsSync(logoPath)) {
@@ -129,13 +131,17 @@ exports.categoryPlanDelete = async (req, res) => {
       }
     }
 
-    for (const image of category.images) {
-      const imagePath = path.join("uploads/category", image.filename);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+    // Deleta todas as imagens associadas
+    if (Array.isArray(category.images)) {
+      for (const image of category.images) {
+        const imagePath = path.join("uploads/category", image.filename);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
       }
     }
 
+    // Remove do banco
     await CategoryPlan.deleteOne({ _id: id });
 
     res.status(200).json({ msg: "Categoria e arquivos deletados com sucesso!" });
@@ -143,6 +149,7 @@ exports.categoryPlanDelete = async (req, res) => {
     res.status(500).json({ msg: "Erro ao deletar categoria", error: error.message });
   }
 };
+
 
 // DELETE - Remover imagem específica (card) por ID e nome via params
 exports.categoryPlanDeleteCard = async (req, res) => {
@@ -169,3 +176,5 @@ exports.categoryPlanDeleteCard = async (req, res) => {
     res.status(500).json({ msg: "Erro ao remover imagem", error: error.message });
   }
 };
+
+
