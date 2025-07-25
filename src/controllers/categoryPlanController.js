@@ -111,8 +111,6 @@ exports.categoryPlanCreateCard = async (req, res) => {
   }
 };
 
-// DELETE - Deletar categoria por ID com remoção de arquivos
-// DELETE - Deletar uma categoria por ID e remover todos os arquivos associados
 exports.categoryPlanDelete = async (req, res) => {
   const { id } = req.params;
 
@@ -123,25 +121,27 @@ exports.categoryPlanDelete = async (req, res) => {
       return res.status(404).json({ msg: "Categoria não encontrada." });
     }
 
-    // Deleta o logo, se existir
-    if (category.logo) {
+    // Deletar logo (se existir e for uma string válida)
+    if (category.logo && typeof category.logo === "string") {
       const logoPath = path.join("uploads/category", category.logo);
       if (fs.existsSync(logoPath)) {
         fs.unlinkSync(logoPath);
       }
     }
 
-    // Deleta todas as imagens associadas
+    // Deletar imagens (verifica se é array e se o filename existe)
     if (Array.isArray(category.images)) {
       for (const image of category.images) {
-        const imagePath = path.join("uploads/category", image.filename);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
+        if (image?.filename && typeof image.filename === "string") {
+          const imagePath = path.join("uploads/category", image.filename);
+          if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+          }
         }
       }
     }
 
-    // Remove do banco
+    // Remover do banco de dados
     await CategoryPlan.deleteOne({ _id: id });
 
     res.status(200).json({ msg: "Categoria e arquivos deletados com sucesso!" });
