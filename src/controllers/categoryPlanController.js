@@ -90,8 +90,9 @@ exports.categoryPlanCreateCard = async (req, res) => {
   const { idCategory } = req.body;
   const files = req.files;
 
+  // Apenas não faz nada se não tiver arquivos
   if (!files || files.length === 0) {
-    return res.status(400).json({ msg: "Nenhuma imagem enviada." });
+    return res.status(200).json({ msg: "Nenhuma imagem enviada. Nenhuma alteração foi feita." });
   }
 
   try {
@@ -110,6 +111,7 @@ exports.categoryPlanCreateCard = async (req, res) => {
     res.status(500).json({ msg: "Erro ao adicionar imagens", error: error.message });
   }
 };
+
 
 exports.categoryPlanDelete = async (req, res) => {
   const { id } = req.params;
