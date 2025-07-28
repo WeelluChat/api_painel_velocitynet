@@ -27,7 +27,6 @@ const categoryPlanController = require("./src/controllers/categoryPlanController
 const cardPlanController = require("./src/controllers/cardPlanController");
 const ComplementController = require("./src/controllers/ComplementController");
 const RouterController = require("./src/controllers/routerController");
-//importando o as propriedades da pasta CandidateController
 const CandidateController = require("./src/controllers/CandidateController");
 const { combosImagesGet } = require("./src/controllers/combosController");
 const combosController = require("./src/controllers/combosController")
@@ -40,11 +39,12 @@ const CardsPlanos = require("./src/controllers/CardsController")
 app.use('/uploads', express.static('uploads'));
 
 app.use(express.json());
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
+// app.use(cors({
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
 
 
 app.get("/api/v1/", (req, res) => {
