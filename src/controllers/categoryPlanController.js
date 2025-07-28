@@ -88,7 +88,7 @@ exports.categoryPlanPatch = async (req, res) => {
 
 // PATCH - Adicionar novas imagens
 exports.categoryPlanCreateCard = async (req, res) => {
-  const { idCategory } = req.body;
+  const { idCategory, isVisible } = req.body;
   const files = req.files;
 
   if (!files || files.length === 0) {
@@ -102,7 +102,7 @@ exports.categoryPlanCreateCard = async (req, res) => {
     }));
 
     await CategoryPlan.updateOne(
-      { _id: idCategory },
+      { _id: idCategory, isVisible: true},
       { $push: { images: { $each: imageObjects } } }
     );
 
@@ -116,6 +116,7 @@ exports.categoryPlanCreateCard = async (req, res) => {
 exports.categoryPlanAtualizarImagemCard = async (req, res) => {
   const { idCategoria, nomeAntigoImagem } = req.params;
   const novaImagem = req.file;
+  const { isVisible } = req.body;
 
   if (!novaImagem) {
     return res.status(400).json({ msg: "Nova imagem não enviada." });
@@ -136,7 +137,7 @@ exports.categoryPlanAtualizarImagemCard = async (req, res) => {
       if (img.filename === nomeAntigoImagem) {
         return {
           filename: novaImagem.filename,
-          isVisible: true,
+          isVisible: isVisible !== undefined ? isVisible : img.isVisible,
         };
       }
       return img;
@@ -150,6 +151,7 @@ exports.categoryPlanAtualizarImagemCard = async (req, res) => {
     res.status(500).json({ msg: "Erro ao atualizar imagem", error: error.message });
   }
 };
+
 
 // DELETE - Deletar categoria inteira
 exports.categoryPlanDelete = async (req, res) => {
