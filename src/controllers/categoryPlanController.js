@@ -24,6 +24,7 @@ exports.uploadCategoryFields = upload.fields([
 ]);
 exports.uploadLogoOnly = upload.single("logo");
 exports.uploadImagesOnly = upload.array("images", 10);
+exports.uploadImagemUnica = upload.single("imagem"); // novo middleware
 
 // === Controllers ===
 
@@ -65,7 +66,7 @@ exports.categoryPlanCreate = async (req, res) => {
   }
 };
 
-// PATCH - Atualizar categoria por ID via params
+// PATCH - Atualizar dados de uma categoria
 exports.categoryPlanPatch = async (req, res) => {
   const { id } = req.params;
   const { nome, visualizacao, isVisible } = req.body;
@@ -85,12 +86,11 @@ exports.categoryPlanPatch = async (req, res) => {
   }
 };
 
-// PATCH - Adicionar novas imagens a uma categoria
+// PATCH - Adicionar novas imagens
 exports.categoryPlanCreateCard = async (req, res) => {
   const { idCategory } = req.body;
   const files = req.files;
 
-  // Apenas não faz nada se não tiver arquivos
   if (!files || files.length === 0) {
     return res.status(200).json({ msg: "Nenhuma imagem enviada. Nenhuma alteração foi feita." });
   }
@@ -112,7 +112,46 @@ exports.categoryPlanCreateCard = async (req, res) => {
   }
 };
 
+// PATCH - Atualizar uma imagem específica (card)
+exports.categoryPlanAtualizarImagemCard = async (req, res) => {
+  const { idCategoria, nomeAntigoImagem } = req.params;
+  const novaImagem = req.file;
 
+  if (!novaImagem) {
+    return res.status(400).json({ msg: "Nova imagem não enviada." });
+  }
+
+  try {
+    const categoria = await CategoryPlan.findById(idCategoria);
+    if (!categoria) {
+      return res.status(404).json({ msg: "Categoria não encontrada." });
+    }
+
+    const caminhoAntigo = path.join("uploads/category", nomeAntigoImagem);
+    if (fs.existsSync(caminhoAntigo)) {
+      fs.unlinkSync(caminhoAntigo);
+    }
+
+    const imagensAtualizadas = categoria.images.map(img => {
+      if (img.filename === nomeAntigoImagem) {
+        return {
+          filename: novaImagem.filename,
+          isVisible: true,
+        };
+      }
+      return img;
+    });
+
+    categoria.images = imagensAtualizadas;
+    await categoria.save();
+
+    res.status(200).json({ msg: "Imagem atualizada com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro ao atualizar imagem", error: error.message });
+  }
+};
+
+// DELETE - Deletar categoria inteira
 exports.categoryPlanDelete = async (req, res) => {
   const { id } = req.params;
 
@@ -123,7 +162,6 @@ exports.categoryPlanDelete = async (req, res) => {
       return res.status(404).json({ msg: "Categoria não encontrada." });
     }
 
-    // Deletar logo (se existir e for uma string válida)
     if (category.logo && typeof category.logo === "string") {
       const logoPath = path.join("uploads/category", category.logo);
       if (fs.existsSync(logoPath)) {
@@ -131,7 +169,6 @@ exports.categoryPlanDelete = async (req, res) => {
       }
     }
 
-    // Deletar imagens (verifica se é array e se o filename existe)
     if (Array.isArray(category.images)) {
       for (const image of category.images) {
         if (image?.filename && typeof image.filename === "string") {
@@ -143,7 +180,6 @@ exports.categoryPlanDelete = async (req, res) => {
       }
     }
 
-    // Remover do banco de dados
     await CategoryPlan.deleteOne({ _id: id });
 
     res.status(200).json({ msg: "Categoria e arquivos deletados com sucesso!" });
@@ -152,8 +188,7 @@ exports.categoryPlanDelete = async (req, res) => {
   }
 };
 
-
-// DELETE - Remover imagem específica (card) por ID e nome via params
+// DELETE - Deletar imagem individual
 exports.categoryPlanDeleteCard = async (req, res) => {
   const { idCategory, cardName } = req.params;
 
@@ -178,5 +213,3 @@ exports.categoryPlanDeleteCard = async (req, res) => {
     res.status(500).json({ msg: "Erro ao remover imagem", error: error.message });
   }
 };
-
-
