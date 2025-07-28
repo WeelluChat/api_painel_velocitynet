@@ -215,3 +215,32 @@ exports.categoryPlanDeleteCard = async (req, res) => {
     res.status(500).json({ msg: "Erro ao remover imagem", error: error.message });
   }
 };
+
+// PATCH - Alterar isVisible de uma imagem específica
+exports.categoryVisibility = async (req, res) => {
+  const { idCategoria, nomeImagem } = req.params;
+  const { isVisible } = req.body;
+
+  if (typeof isVisible !== 'boolean') {
+    return res.status(400).json({ msg: "'isVisible' deve ser true ou false." });
+  }
+
+  try {
+    const categoria = await CategoryPlan.findById(idCategoria);
+    if (!categoria) {
+      return res.status(404).json({ msg: "Categoria não encontrada." });
+    }
+
+    const imagemIndex = categoria.images.findIndex(img => img.filename === nomeImagem);
+    if (imagemIndex === -1) {
+      return res.status(404).json({ msg: "Imagem não encontrada na categoria." });
+    }
+
+    categoria.images[imagemIndex].isVisible = isVisible;
+    await categoria.save();
+
+    res.status(200).json({ msg: "Visibilidade da imagem atualizada com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro ao atualizar visibilidade da imagem", error: error.message });
+  }
+};

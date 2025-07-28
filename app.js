@@ -190,6 +190,7 @@ app.post("/api/v1/category-plan/create", categoryPlanController.uploadCategoryFi
 app.patch("/api/v1/category-plan/patch/:id", categoryPlanController.uploadLogoOnly, categoryPlanController.categoryPlanPatch);
 app.patch("/api/v1/category-plan/create-card", categoryPlanController.uploadImagesOnly, categoryPlanController.categoryPlanCreateCard);
 app.patch("/api/v1/category-plan/update-card/:idCategoria/:nomeAntigoImagem", categoryPlanController.uploadImagemUnica, categoryPlanController.categoryPlanAtualizarImagemCard);
+app.patch("/api/v1/category-plan/visibility/:idCategoria/:nomeImagem", categoryPlanController.categoryVisibility);
 
 // DELETE com params
 app.delete("/api/v1/category-plan/delete/:id", categoryPlanController.categoryPlanDelete);
