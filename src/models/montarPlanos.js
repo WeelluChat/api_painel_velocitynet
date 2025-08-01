@@ -12,6 +12,8 @@ const Beneficio = new mongoose.Schema({
     nome: { type: String, required: true },
     isVisible: { type: Boolean, default: true },
     valor: { type: Number, required: true },
+    color: { type: String, required: false },
+    beneficioDetalhes: [{text: String}],
     image: { type: String, required: true },
 });
 
