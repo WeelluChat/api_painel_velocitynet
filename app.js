@@ -29,23 +29,22 @@ const ComplementController = require("./src/controllers/ComplementController");
 const RouterController = require("./src/controllers/routerController");
 const CandidateController = require("./src/controllers/CandidateController");
 const { combosImagesGet } = require("./src/controllers/combosController");
-const combosController = require("./src/controllers/combosController")
-const MontarController = require("./src/controllers/montarComboController")
-const PerguntasController = require("./src/controllers/perguntasController")
-const CardsPlanos = require("./src/controllers/CardsController")
+const combosController = require("./src/controllers/combosController");
+const MontarController = require("./src/controllers/montarComboController");
+const PerguntasController = require("./src/controllers/perguntasController");
+const CardsPlanos = require("./src/controllers/CardsController");
 
+app.use("/uploads", cors(), express.static("uploads"));
 
+app.use(express.json({ limit: "10mb" }));
 
-app.use('/uploads', cors(), express.static('uploads'));
-
-app.use(express.json({ limit: '10mb' }));
-
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.get("/api/v1/", (req, res) => {
   res.status(200).json({ msg: "Bem vindo a nossa api!" });
@@ -54,16 +53,24 @@ app.get("/api/v1/", (req, res) => {
 app.get("/api/v1/uploads/:nomeDoArquivo", sliderController.verArquivo);
 
 ////////////////////////////////////////////////// COMBOS ///////////////////////////////////////////////////////////
-app.get('/api/v1/combos', combosController.combosImagesGet)
-app.post('/api/v1/combos', combosController.combosImagesPost)
-app.delete('/api/v1/combos/:id', combosController.combosImagesDelete)
+app.get("/api/v1/combos", combosController.combosImagesGet);
+app.post("/api/v1/combos", combosController.combosImagesPost);
+app.delete("/api/v1/combos/:id", combosController.combosImagesDelete);
 ////////////////////////////////////////////////// COMBOS ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// SLIDER ///////////////////////////////////////////////////////////
 
 app.get("/api/v1/slider", sliderController.sliderGet); // agora retorna todos
-app.post("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPost);
-app.patch("/api/v1/slider", sliderController.sliderUpload, sliderController.sliderPatch);
+app.post(
+  "/api/v1/slider",
+  sliderController.sliderUpload,
+  sliderController.sliderPost
+);
+app.patch(
+  "/api/v1/slider",
+  sliderController.sliderUpload,
+  sliderController.sliderPatch
+);
 app.delete("/api/v1/slider", sliderController.sliderDelete);
 app.get("/api/v1/slider/view/:nomeDoArquivo", sliderController.verArquivo);
 
@@ -73,8 +80,8 @@ app.get("/api/v1/slider/view/:nomeDoArquivo", sliderController.verArquivo);
 app.post("/api/v1/login", loginController.login);
 app.post("/api/v1/auth/login", loginController.authLogin);
 app.post("/api/v1/auth/register", loginController.authRegister);
-app.get("/api/v1/auth/users", loginController.authUser)
-app.put('/api/v1/auth/password/:id', loginController.authPassword)
+app.get("/api/v1/auth/users", loginController.authUser);
+app.put("/api/v1/auth/password/:id", loginController.authPassword);
 ///////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// CARD ///////////////////////////////////////////////////////////
@@ -162,40 +169,51 @@ app.patch(
 
 ///////////////////////////////////////////////// ADDITIONAL ///////////////////////////////////////////////////////////
 app.get("/api/v1/additional", additionalController.additionalGet);
-app.post(
-  "/api/v1/additional/create",
-  checkToken,
-  upload.single("image"),
-  additionalController.additionalCreate
-);
-app.patch(
-  "/api/v1/additional/update",
-  checkToken,
-  upload.single("image"),
-  additionalController.additionalPatch
-);
-app.delete(
-  "/api/v1/additional/delete",
-  checkToken,
-  additionalController.additionalDelete
-);
+app.post("/api/v1/additional/create", additionalController.additionalPost);
+app.patch("/api/v1/additional/update", additionalController.additionalPatch);
+app.delete("/api/v1/additional/delete", additionalController.additionalDelete);
 
 ////////////////////////ADDITIONAL//////////////////////// ADDITIONAL ///////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////////////////////
 // GET e POST
 app.get("/api/v1/category-plan", categoryPlanController.categoryPlanGet);
-app.post("/api/v1/category-plan/create", categoryPlanController.uploadCategoryFields, categoryPlanController.categoryPlanCreate);
+app.post(
+  "/api/v1/category-plan/create",
+  categoryPlanController.uploadCategoryFields,
+  categoryPlanController.categoryPlanCreate
+);
 
 // PATCH com params
-app.patch("/api/v1/category-plan/patch/:id", categoryPlanController.uploadLogoOnly, categoryPlanController.categoryPlanPatch);
-app.patch("/api/v1/category-plan/create-card", categoryPlanController.uploadImagesOnly, categoryPlanController.categoryPlanCreateCard);
-app.patch("/api/v1/category-plan/update-card/:idCategoria/:nomeAntigoImagem", categoryPlanController.uploadImagemUnica, categoryPlanController.categoryPlanAtualizarImagemCard);
-app.patch("/api/v1/category-plan/visibility/:idCategoria/:nomeImagem", categoryPlanController.categoryVisibility);
+app.patch(
+  "/api/v1/category-plan/patch/:id",
+  categoryPlanController.uploadLogoOnly,
+  categoryPlanController.categoryPlanPatch
+);
+app.patch(
+  "/api/v1/category-plan/create-card",
+  categoryPlanController.uploadImagesOnly,
+  categoryPlanController.categoryPlanCreateCard
+);
+app.patch(
+  "/api/v1/category-plan/update-card/:idCategoria/:nomeAntigoImagem",
+  categoryPlanController.uploadImagemUnica,
+  categoryPlanController.categoryPlanAtualizarImagemCard
+);
+app.patch(
+  "/api/v1/category-plan/visibility/:idCategoria/:nomeImagem",
+  categoryPlanController.categoryVisibility
+);
 
 // DELETE com params
-app.delete("/api/v1/category-plan/delete/:id", categoryPlanController.categoryPlanDelete);
-app.delete("/api/v1/category-plan/delete-card/:idCategory/:cardName", categoryPlanController.categoryPlanDeleteCard);
+app.delete(
+  "/api/v1/category-plan/delete/:id",
+  categoryPlanController.categoryPlanDelete
+);
+app.delete(
+  "/api/v1/category-plan/delete-card/:idCategory/:cardName",
+  categoryPlanController.categoryPlanDeleteCard
+);
 
 ///////////////////////////////////////////////// CATEGORY PLAN ///////////////////////////////////////////////////////////
 
@@ -236,9 +254,11 @@ app.delete(
 
 ////////////////////////////////////////////////////// CANDIDATE ////////////////////////////////////////////////////////////////////
 
-app.get("/api/v1/candidate/get",
+app.get(
+  "/api/v1/candidate/get",
 
-  CandidateController.candidateGet);
+  CandidateController.candidateGet
+);
 
 app.post(
   "/api/v1/candidate/post",
@@ -253,7 +273,7 @@ app.post("/api/v1/candidate/delete", CandidateController.candidateDelete);
 
 ////////////////////////////////////////////////// email controllers ///////////////////////////////////////////////////////////////
 
-app.use('/api/v1', require('./src/controllers/emailControllers'));
+app.use("/api/v1", require("./src/controllers/emailControllers"));
 ////////////////////////////////////////////////// email controllers ///////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////// MONTAR COMBOS ////////////////////////////////////////////////////////////////////////
@@ -274,7 +294,10 @@ app.post("/api/v1/criarPlanos", MontarController.CombosPost);
 app.put("/api/v1/atualizarPlanos/:id", MontarController.CombosPut);
 app.delete("/api/v1/deletarPlanos/:id", MontarController.CombosDelete);
 app.put("/api/v1/atualizarPlano", MontarController.AtualizarPlanoViaBody);
-app.put("/api/v1/atualizarBeneficio", MontarController.AtualizarBeneficioViaBody);
+app.put(
+  "/api/v1/atualizarBeneficio",
+  MontarController.AtualizarBeneficioViaBody
+);
 app.put("/api/v1/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
 app.put("/api/v1/beneficioImage", MontarController.AtualizarImagemBeneficio);
 app.patch("/api/v1/adicionarPlano", MontarController.AdicionarPlanoAoCombo);
@@ -294,7 +317,6 @@ app.delete("/api/v1/cards/:id", CardsPlanos.CardsDelete);
 app.put("/api/v1/cards/:id", CardsPlanos.CardsPut);
 app.patch("/api/v1/cards", CardsPlanos.CardsPatch);
 ///////////////////////////////////////////////// CARDS PLANOS ////////////////////////////////////////////////////////////////////////////
-
 
 mongoose
   .connect(process.env.URL_DB, {

@@ -2,16 +2,29 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const Additional = mongoose.model("additional", {
-  nome: String,
-  image: String,
-  preco: Schema.Types.Decimal128,
-  idPlan: {
-    ref: "plans",
-    type: Schema.Types.ObjectId,
+  name: {
+    type: String,
+    required: true,
   },
-  status: {
+  isVisible: {
     type: Boolean,
     default: true,
+  },
+  isIncluded: {
+    type: Boolean,
+    default: false,
+  },
+  color: {
+    type: String,
+    default: "ff000000",
+  },
+  benefitsDetails: {
+    type: [{ text: String }],
+    default: [],
+  },
+  image: {
+    type: String,
+    required: true,
   },
 });
 
