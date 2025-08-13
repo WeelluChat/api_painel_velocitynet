@@ -58,6 +58,10 @@ exports.additionalPatch = async (req, res) => {
 exports.additionalDelete = async (req, res) => {
   const { id } = req.body;
 
+  if (!id) {
+    return res.status(422).json({ msg: "ID é obrigatório!" });
+  }
+
   try {
     Additional.deleteOne({ _id: id });
     res.status(200).json({ msg: "Adicional deletado com sucesso!" });

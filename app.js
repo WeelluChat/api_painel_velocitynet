@@ -155,7 +155,7 @@ app.patch(
 //   "/api/v1/plans/update-imagem",
 //   upload.single("image"),
 //   checkToken,
-//   plansController.plansPatchImagem
+//   plansController.plansPatchImag
 // );
 
 // app.patch(
