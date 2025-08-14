@@ -6,13 +6,10 @@ const Additional = mongoose.model("additional", {
     type: String,
     required: true,
   },
-  isVisible: {
-    type: Boolean,
-    default: true,
-  },
-  isIncluded: {
+  seletor: {
     type: Boolean,
     default: false,
+    required: false
   },
   color: {
     type: String,

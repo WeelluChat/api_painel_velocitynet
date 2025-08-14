@@ -56,14 +56,15 @@ exports.additionalPatch = async (req, res) => {
 };
 
 exports.additionalDelete = async (req, res) => {
-  const { id } = req.body;
-
-  if (!id) {
-    return res.status(422).json({ msg: "ID é obrigatório!" });
-  }
+  const { id } = req.params;
 
   try {
-    Additional.deleteOne({ _id: id });
+    const result = await Additional.deleteOne({ _id: id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ msg: "Adicional não encontrado." });
+    }
+
     res.status(200).json({ msg: "Adicional deletado com sucesso!" });
   } catch (e) {
     res.status(500).json({ msg: "Erro no servidor!" });

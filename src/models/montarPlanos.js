@@ -8,6 +8,7 @@ const Detalhes = new mongoose.Schema({
 
 const Beneficio = new mongoose.Schema({
     idCombo: String,
+    seletor: {type: Boolean, default: false, required: false},
     incluso: { type: Boolean, default: false },
     nome: { type: String, required: true },
     isVisible: { type: Boolean, default: true },
