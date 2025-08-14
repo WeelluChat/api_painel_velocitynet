@@ -6,7 +6,7 @@ const Additional = mongoose.model("additional", {
     type: String,
     required: true,
   },
-  seletor: {
+  isMultiple: {
     type: Boolean,
     default: false,
     required: false
