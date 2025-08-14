@@ -171,7 +171,7 @@ app.patch(
 app.get("/api/v1/additional", additionalController.additionalGet);
 app.post("/api/v1/additional/create", additionalController.additionalPost);
 app.patch("/api/v1/additional/update", additionalController.additionalPatch);
-app.delete("/api/v1/additional/delete", additionalController.additionalDelete);
+app.delete("/api/v1/additional/delete/:id", additionalController.additionalDelete);
 
 ////////////////////////ADDITIONAL//////////////////////// ADDITIONAL ///////////////////////////////////////////////////////////
 
