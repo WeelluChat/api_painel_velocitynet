@@ -50,12 +50,13 @@ exports.cardGet = async (req, res) => {
 };
 
 exports.cardPost = async (req, res) => {
-  const { name, description, logo } = req.body;
+  const { name, description, logo, icon } = req.body;
 
   const card = new Card({
     name: name,
     description: description,
     logo: logo,
+    icon: icon,
   });
 
   try {
@@ -67,12 +68,12 @@ exports.cardPost = async (req, res) => {
 };
 
 exports.cardPatch = async (req, res) => {
-  const { id, name, description, logo } = req.body;
+  const { id, name, description, logo, icon } = req.body;
 
   try {
     await Card.updateOne(
       { _id: id },
-      { $set: { name: name, description: description, logo: logo } }
+      { $set: { name: name, description: description, logo: logo, icon: icon } }
     );
     res.status(200).json({
       msg: "Card alterado com sucesso",
