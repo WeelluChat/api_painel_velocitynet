@@ -12,7 +12,7 @@ exports.tvGet = async (req, res) => {
 
 exports.tvPost = async (req, res) => {
   const { title, description, value } = req.body;
-  const image = req.file ? req.file.originalname : null;
+  const image = req.file ? req.file.filename : null;
 
   const tv = new Tv({
     title: title,
@@ -31,7 +31,7 @@ exports.tvPost = async (req, res) => {
 
 exports.tvPatch = async (req, res) => {
   const { id, title, description, value } = req.body;
-  const image = req.file ? req.file.originalname : null;
+  const image = req.file ? req.file.filename : null;
 
   const id_param = req.params.id;
 
