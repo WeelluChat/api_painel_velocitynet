@@ -1,21 +1,23 @@
 const { Router } = require("express");
 const categoryPlanController = require("../controllers/categoryPlanController");
+const checkToken = require("../middleware/checktoken");
 
 const router = Router();
 
 router.get("/", categoryPlanController.categoryPlanGet);
-router.post("/create", categoryPlanController.uploadCategoryFields, categoryPlanController.categoryPlanCreate);
+router.post("/create", checkToken, categoryPlanController.uploadCategoryFields, categoryPlanController.categoryPlanCreate);
 
-router.patch("/patch/:id", categoryPlanController.uploadLogoOnly, categoryPlanController.categoryPlanPatch);
-router.patch("/create-card", categoryPlanController.uploadImagesOnly, categoryPlanController.categoryPlanCreateCard);
+router.patch("/patch/:id", checkToken, categoryPlanController.uploadLogoOnly, categoryPlanController.categoryPlanPatch);
+router.patch("/create-card", checkToken, categoryPlanController.uploadImagesOnly, categoryPlanController.categoryPlanCreateCard);
 router.patch(
   "/update-card/:idCategoria/:nomeAntigoImagem",
+  checkToken,
   categoryPlanController.uploadImagemUnica,
   categoryPlanController.categoryPlanAtualizarImagemCard
 );
-router.patch("/visibility/:idCategoria/:nomeImagem", categoryPlanController.categoryVisibility);
+router.patch("/visibility/:idCategoria/:nomeImagem", checkToken, categoryPlanController.categoryVisibility);
 
-router.delete("/delete/:id", categoryPlanController.categoryPlanDelete);
-router.delete("/delete-card/:idCategory/:cardName", categoryPlanController.categoryPlanDeleteCard);
+router.delete("/delete/:id", checkToken, categoryPlanController.categoryPlanDelete);
+router.delete("/delete-card/:idCategory/:cardName", checkToken, categoryPlanController.categoryPlanDeleteCard);
 
 module.exports = router;

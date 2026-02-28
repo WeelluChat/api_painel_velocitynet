@@ -3,11 +3,7 @@ const Additional = require("../models/Additional");
 exports.additionalGet = async (req, res) => {
   try {
     const additionals = await Additional.find({});
-    if (additionals.length > 0) {
-      res.status(200).json(additionals);
-    } else {
-      res.status(404).json({ msg: "Nenhum adicional encontrado" });
-    }
+    res.status(200).json(additionals);
   } catch (error) {
     res.status(500).json({ msg: "Error no servidor " });
   }

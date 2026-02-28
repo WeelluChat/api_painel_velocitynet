@@ -8,6 +8,8 @@ const routes = require("./src/routes");
 
 const app = express();
 
+app.set("etag", false);
+
 const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
