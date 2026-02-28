@@ -41,20 +41,19 @@ exports.authRegister = async (req, res) => {
   }
 };
 
+const DUMMY_HASH = "$2b$12$invalidhashfortimingprotectionxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
 exports.authLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(404).json({ msg: "Usuário não encontrado" });
-    }
+    const hashToCompare = user ? user.password : DUMMY_HASH;
+    const checkPassword = await bcrypt.compare(password, hashToCompare);
 
-    const checkPassword = await bcrypt.compare(password, user.password);
-
-    if (!checkPassword) {
-      return res.status(422).json({ msg: "Senha inválida" });
+    if (!user || !checkPassword) {
+      return res.status(401).json({ msg: "Credenciais inválidas" });
     }
 
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET);
