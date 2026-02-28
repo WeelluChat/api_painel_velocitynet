@@ -3,14 +3,14 @@ const MontarController = require("../controllers/montarComboController");
 
 const router = Router();
 
-router.get("/planos", MontarController.CombosGet);
-router.post("/criarPlanos", MontarController.CombosPost);
-router.put("/atualizarPlanos/:id", MontarController.CombosPut);
-router.delete("/deletarPlanos/:id", MontarController.CombosDelete);
-router.put("/atualizarPlano", MontarController.AtualizarPlanoViaBody);
-router.put("/atualizarBeneficio", MontarController.AtualizarBeneficioViaBody);
-router.put("/atualizarDetalhe", MontarController.AtualizarDetalheViaBody);
-router.put("/beneficioImage", MontarController.AtualizarImagemBeneficio);
-router.patch("/adicionarPlano", MontarController.AdicionarPlanoAoCombo);
+router.get("/planos", MontarController.combosGet);
+router.post("/criarPlanos", MontarController.combosPost);
+router.put("/atualizarPlanos/:id", MontarController.combosPut);
+router.delete("/deletarPlanos/:id", MontarController.combosDelete);
+router.put("/atualizarPlano", MontarController.atualizarPlanoViaBody);
+router.put("/atualizarBeneficio", MontarController.atualizarBeneficioViaBody);
+router.put("/atualizarDetalhe", MontarController.atualizarDetalheViaBody);
+router.put("/beneficioImage", MontarController.atualizarImagemBeneficio);
+router.patch("/adicionarPlano", MontarController.adicionarPlanoAoCombo);
 
 module.exports = router;

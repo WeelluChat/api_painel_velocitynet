@@ -1,14 +1,14 @@
 const { Router } = require("express");
 const checkToken = require("../middleware/checktoken");
 const { upload } = require("../middleware/upload");
-const ComplementController = require("../controllers/ComplementController");
+const complementController = require("../controllers/complementController");
 
 const router = Router();
 
-router.get("/", ComplementController.complementGet);
-router.post("/get-id", ComplementController.complementGetByID);
-router.post("/create", checkToken, upload.single("image"), ComplementController.complementCreate);
-router.patch("/update", checkToken, upload.single("image"), ComplementController.complementPatch);
-router.delete("/delete", checkToken, ComplementController.complementDelete);
+router.get("/", complementController.complementGet);
+router.post("/get-id", complementController.complementGetByID);
+router.post("/create", checkToken, upload.single("image"), complementController.complementCreate);
+router.patch("/update", checkToken, upload.single("image"), complementController.complementPatch);
+router.delete("/delete", checkToken, complementController.complementDelete);
 
 module.exports = router;

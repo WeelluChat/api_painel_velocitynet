@@ -21,22 +21,13 @@ exports.additionalPost = async (req, res) => {
     return res.status(422).json({ msg: "Nome e imagem são obrigatórios!" });
   }
 
-  const additional = new Additional({
-    name,
-    isVisible,
-    isIncluded,
-    color,
-    benefitsDetails,
-    image,
-    benefitsDetails,
-    image,
-  });
+  const additional = new Additional({ name, isVisible, isIncluded, color, benefitsDetails, image });
 
   try {
     await additional.save();
     res.status(201).json({ msg: "Adicional criado com sucesso!" });
   } catch (e) {
-    res.status(200).json({ msg: "Erro no servidor!" });
+    res.status(500).json({ msg: "Erro no servidor" });
   }
 };
 
