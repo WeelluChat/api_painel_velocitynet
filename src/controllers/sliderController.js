@@ -72,13 +72,28 @@ exports.sliderPatch = async (req, res) => {
   }
 
   try {
+    const slider = await Slider.findById(id);
+    if (!slider) {
+      return res.status(404).json({ msg: "Slider não encontrado" });
+    }
+
     const updateFields = {};
 
     if (req.files?.desktop?.[0]) {
+      const oldDesktop = slider.desktop?.name;
+      if (oldDesktop) {
+        const oldPath = path.join(uploadPath, oldDesktop);
+        try { await fs.promises.unlink(oldPath); } catch (err) { console.warn(`Erro ao excluir desktop antigo: ${oldDesktop}`, err.message); }
+      }
       updateFields["desktop.name"] = req.files.desktop[0].filename;
     }
 
     if (req.files?.mobile?.[0]) {
+      const oldMobile = slider.mobile?.name;
+      if (oldMobile) {
+        const oldPath = path.join(uploadPath, oldMobile);
+        try { await fs.promises.unlink(oldPath); } catch (err) { console.warn(`Erro ao excluir mobile antigo: ${oldMobile}`, err.message); }
+      }
       updateFields["mobile.name"] = req.files.mobile[0].filename;
     }
 
