@@ -7,6 +7,10 @@ const speedTestSchema = new mongoose.Schema({
   redirectUrl: {
     type: String,
   },
+  enabled: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("SpeedTest", speedTestSchema);

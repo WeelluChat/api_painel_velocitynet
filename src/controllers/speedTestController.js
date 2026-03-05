@@ -49,6 +49,7 @@ exports.speedTestPost = async (req, res) => {
     const speedTest = new SpeedTest({
       image: { name: image.filename },
       redirectUrl,
+      enabled: true,
     });
 
     await speedTest.save();
@@ -79,6 +80,10 @@ exports.speedTestPatch = async (req, res) => {
 
     if (req.body.redirectUrl !== undefined) {
       updateFields["redirectUrl"] = req.body.redirectUrl;
+    }
+
+    if (req.body.enabled !== undefined) {
+      updateFields["enabled"] = req.body.enabled !== 'false' && req.body.enabled !== false;
     }
 
     await SpeedTest.updateOne({ _id: speedTest._id }, { $set: updateFields });
