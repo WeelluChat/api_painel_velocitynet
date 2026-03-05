@@ -8,6 +8,7 @@ router.get("/planos", MontarController.combosGet);
 router.post("/criarPlanos", checkToken, MontarController.combosPost);
 router.put("/atualizarPlanos/:id", checkToken, MontarController.combosPut);
 router.delete("/deletarPlanos/:id", checkToken, MontarController.combosDelete);
+router.delete("/deletarPlano/:comboId/:planoId", checkToken, MontarController.deletarPlano);
 router.put("/atualizarPlano", checkToken, MontarController.atualizarPlanoViaBody);
 router.put("/atualizarBeneficio", checkToken, MontarController.atualizarBeneficioViaBody);
 router.put("/atualizarDetalhe", checkToken, MontarController.atualizarDetalheViaBody);
