@@ -13,6 +13,7 @@ router.use("/category-plan", require("./categoryPlan.routes"));
 router.use("/slider", require("./slider.routes"));
 router.use("/tv", require("./tv.routes"));
 router.use("/speed-test", require("./speedTest.routes"));
+router.use("/rotating-banner", require("./rotatingBanner.routes"));
 
 
 module.exports = router;
