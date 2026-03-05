@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const speedTestSchema = new mongoose.Schema({
-  image: {
+  desktopImage: {
+    name: String,
+  },
+  mobileImage: {
     name: String,
   },
   redirectUrl: {

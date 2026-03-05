@@ -19,7 +19,10 @@ const upload = multer({
   limits: { fileSize: 200 * 1024 * 1024 },
 });
 
-exports.speedTestUpload = upload.fields([{ name: "image", maxCount: 1 }]);
+exports.speedTestUpload = upload.fields([
+  { name: "desktopImage", maxCount: 1 },
+  { name: "mobileImage", maxCount: 1 },
+]);
 
 // GET - retorna o documento único
 exports.speedTestGet = async (req, res) => {
@@ -39,15 +42,17 @@ exports.speedTestPost = async (req, res) => {
       return res.status(409).json({ msg: "SpeedTest já existe. Use PATCH para atualizar." });
     }
 
-    const image = req.files?.image?.[0];
+    const desktopImage = req.files?.desktopImage?.[0];
+    const mobileImage = req.files?.mobileImage?.[0];
     const { redirectUrl } = req.body;
 
-    if (!image) {
-      return res.status(422).json({ msg: "Imagem ausente ou inválida" });
+    if (!desktopImage || !mobileImage) {
+      return res.status(422).json({ msg: "Imagens ausentes ou inválidas (desktopImage e mobileImage são obrigatórias)" });
     }
 
     const speedTest = new SpeedTest({
-      image: { name: image.filename },
+      desktopImage: { name: desktopImage.filename },
+      mobileImage: { name: mobileImage.filename },
       redirectUrl,
       enabled: true,
     });
@@ -69,13 +74,22 @@ exports.speedTestPatch = async (req, res) => {
 
     const updateFields = {};
 
-    if (req.files?.image?.[0]) {
-      const oldImage = speedTest.image?.name;
-      if (oldImage) {
-        const oldPath = path.join(uploadPath, oldImage);
-        try { await fs.promises.unlink(oldPath); } catch (err) { console.warn(`Erro ao excluir imagem antiga: ${oldImage}`, err.message); }
+    if (req.files?.desktopImage?.[0]) {
+      const oldDesktop = speedTest.desktopImage?.name;
+      if (oldDesktop) {
+        const oldPath = path.join(uploadPath, oldDesktop);
+        try { await fs.promises.unlink(oldPath); } catch (err) { console.warn(`Erro ao excluir desktopImage antiga: ${oldDesktop}`, err.message); }
       }
-      updateFields["image.name"] = req.files.image[0].filename;
+      updateFields["desktopImage.name"] = req.files.desktopImage[0].filename;
+    }
+
+    if (req.files?.mobileImage?.[0]) {
+      const oldMobile = speedTest.mobileImage?.name;
+      if (oldMobile) {
+        const oldPath = path.join(uploadPath, oldMobile);
+        try { await fs.promises.unlink(oldPath); } catch (err) { console.warn(`Erro ao excluir mobileImage antiga: ${oldMobile}`, err.message); }
+      }
+      updateFields["mobileImage.name"] = req.files.mobileImage[0].filename;
     }
 
     if (req.body.redirectUrl !== undefined) {
@@ -101,14 +115,18 @@ exports.speedTestDelete = async (req, res) => {
       return res.status(404).json({ msg: "SpeedTest não encontrado" });
     }
 
-    const imageName = speedTest.image?.name;
-    if (imageName) {
-      const caminho = path.join(uploadPath, imageName);
-      try {
-        await fs.promises.access(caminho, fs.constants.F_OK);
-        await fs.promises.unlink(caminho);
-      } catch (err) {
-        console.warn(`Erro ao excluir arquivo: ${imageName}`, err.message);
+    const desktopName = speedTest.desktopImage?.name;
+    const mobileName = speedTest.mobileImage?.name;
+
+    for (const fileName of [desktopName, mobileName]) {
+      if (fileName) {
+        const caminho = path.join(uploadPath, fileName);
+        try {
+          await fs.promises.access(caminho, fs.constants.F_OK);
+          await fs.promises.unlink(caminho);
+        } catch (err) {
+          console.warn(`Erro ao excluir arquivo: ${fileName}`, err.message);
+        }
       }
     }
 
