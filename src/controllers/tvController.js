@@ -10,10 +10,10 @@ exports.tvGet = async (req, res) => {
 };
 
 exports.tvPost = async (req, res) => {
-  const { title, description, value } = req.body;
+  const { title, description } = req.body;
   const image = req.file ? req.file.filename : null;
 
-  const tv = new Tv({ title, description, value, image });
+  const tv = new Tv({ title, description, image });
 
   try {
     await tv.save();
@@ -25,13 +25,12 @@ exports.tvPost = async (req, res) => {
 
 exports.tvPatch = async (req, res) => {
   const id = req.params.id ?? req.body.id;
-  const { title, description, value } = req.body;
+  const { title, description } = req.body;
   const image = req.file ? req.file.filename : null;
 
   const updateFields = {};
   if (title !== undefined) updateFields.title = title;
   if (description !== undefined) updateFields.description = description;
-  if (value !== undefined) updateFields.value = value;
   if (image !== null) updateFields.image = image;
 
   try {
