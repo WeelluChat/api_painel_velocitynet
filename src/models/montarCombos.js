@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const montarCombo = new mongoose.Schema({
     title: { type: String, required: true },
     isVisible: { type: Boolean, default: true },
+    cityId: { type: mongoose.Schema.Types.ObjectId, ref: "City" },
     planos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Plano" }],
 });
 

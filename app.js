@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const routes = require("./src/routes");
+const { seedCities } = require("./src/controllers/citiesController");
 
 const app = express();
 
@@ -36,7 +37,8 @@ const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(process.env.URL_DB)
-  .then(() => {
+  .then(async () => {
+    await seedCities();
     app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
     console.log("Conectado ao banco");
   })

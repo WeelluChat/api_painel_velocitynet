@@ -15,6 +15,8 @@ router.use("/tv", require("./tv.routes"));
 router.use("/speed-test", require("./speedTest.routes"));
 router.use("/rotating-banner", require("./rotatingBanner.routes"));
 router.use("/membership", require("./membership.routes"));
+router.use("/cities", require("./cities.routes"));
+router.use("/app-config", require("./appConfig.routes"));
 
 
 module.exports = router;

@@ -3,7 +3,9 @@ const Plano = require("../models/montarPlanos");
 
 exports.combosGet = async (req, res) => {
   try {
-    const combos = await Combo.find().populate("planos");
+    const filter = {};
+    if (req.query.cityId) filter.cityId = req.query.cityId;
+    const combos = await Combo.find(filter).populate("planos");
     res.status(200).json(combos);
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
@@ -12,8 +14,11 @@ exports.combosGet = async (req, res) => {
 
 exports.combosPost = async (req, res) => {
   try {
-    const { title, isVisible } = req.body;
-    const novoCombo = new Combo({ title, isVisible });
+    const { title, isVisible, cityId } = req.body;
+    if (!cityId) {
+      return res.status(400).json({ msg: "cityId é obrigatório" });
+    }
+    const novoCombo = new Combo({ title, isVisible, cityId });
     await novoCombo.save();
     res.status(201).json(novoCombo);
   } catch (error) {
@@ -181,11 +186,14 @@ exports.atualizarImagemBeneficio = async (req, res) => {
 
 exports.getCombosLight = async (req, res) => {
   try {
-    const combos = await Combo.find().select("title isVisible planos");
+    const filter = {};
+    if (req.query.cityId) filter.cityId = req.query.cityId;
+    const combos = await Combo.find(filter).select("title isVisible planos cityId");
     const result = combos.map((c) => ({
       _id: c._id,
       title: c.title,
       isVisible: c.isVisible,
+      cityId: c.cityId,
       planoCount: c.planos.length,
     }));
     res.status(200).json(result);

@@ -31,7 +31,9 @@ exports.uploadImagemUnica = upload.single("imagem"); // novo middleware
 // GET - Buscar todas as categorias
 exports.categoryPlanGet = async (req, res) => {
   try {
-    const categories = await CategoryPlan.find({});
+    const filter = {};
+    if (req.query.cityId) filter.cityId = req.query.cityId;
+    const categories = await CategoryPlan.find(filter);
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ msg: "Erro ao buscar categorias", error: error.message });
@@ -40,7 +42,11 @@ exports.categoryPlanGet = async (req, res) => {
 
 // POST - Criar nova categoria
 exports.categoryPlanCreate = async (req, res) => {
-  const { nome, visualizacao, isVisible } = req.body;
+  const { nome, visualizacao, isVisible, cityId } = req.body;
+
+  if (!cityId) {
+    return res.status(400).json({ msg: "cityId é obrigatório" });
+  }
 
   const logo = req.files?.logo?.[0]?.filename;
   const imagesFiles = req.files?.images || [];
@@ -54,6 +60,7 @@ exports.categoryPlanCreate = async (req, res) => {
     nome,
     logo,
     visualizacao,
+    cityId,
     isVisible: isVisible !== undefined ? isVisible : true,
     images,
   });
