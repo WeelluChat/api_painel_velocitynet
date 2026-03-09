@@ -5,7 +5,7 @@ exports.combosGet = async (req, res) => {
   try {
     const filter = {};
     if (req.query.cityId) filter.cityId = req.query.cityId;
-    const combos = await Combo.find(filter).populate("planos");
+    const combos = await Combo.find(filter).sort({ order: 1 }).populate("planos");
     res.status(200).json(combos);
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
@@ -188,15 +188,44 @@ exports.getCombosLight = async (req, res) => {
   try {
     const filter = {};
     if (req.query.cityId) filter.cityId = req.query.cityId;
-    const combos = await Combo.find(filter).select("title isVisible planos cityId");
+    const combos = await Combo.find(filter)
+      .select("title isVisible order planos cityId")
+      .sort({ order: 1 });
     const result = combos.map((c) => ({
       _id: c._id,
       title: c.title,
       isVisible: c.isVisible,
+      order: c.order,
       cityId: c.cityId,
       planoCount: c.planos.length,
     }));
     res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+exports.reorderCombos = async (req, res) => {
+  try {
+    const items = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ msg: "Body deve ser um array de { id, order }" });
+    }
+
+    const invalid = items.some(({ id, order }) => !id || typeof order !== 'number');
+    if (invalid) {
+      return res.status(400).json({ msg: "Cada item deve ter 'id' (string) e 'order' (número)" });
+    }
+
+    const bulkOps = items.map(({ id, order }) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { order } },
+      },
+    }));
+
+    await Combo.bulkWrite(bulkOps);
+    res.status(200).json({ msg: "Ordem dos combos atualizada com sucesso" });
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
   }

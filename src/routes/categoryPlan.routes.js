@@ -15,6 +15,7 @@ router.patch(
   categoryPlanController.uploadImagemUnica,
   categoryPlanController.categoryPlanAtualizarImagemCard
 );
+router.patch("/reorder", checkToken, categoryPlanController.reorderCategories);
 router.patch("/visibility/:idCategoria/:nomeImagem", checkToken, categoryPlanController.categoryVisibility);
 
 router.delete("/delete/:id", checkToken, categoryPlanController.categoryPlanDelete);

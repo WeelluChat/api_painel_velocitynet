@@ -8,6 +8,7 @@ const CategoryPlan = mongoose.model("category_plan", new Schema({
     type: Boolean,
     default: true,
   },
+  order: { type: Number, default: 0 },
   cityId: { type: Schema.Types.ObjectId, ref: "City" },
   images: [
     {

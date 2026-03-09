@@ -33,10 +33,37 @@ exports.categoryPlanGet = async (req, res) => {
   try {
     const filter = {};
     if (req.query.cityId) filter.cityId = req.query.cityId;
-    const categories = await CategoryPlan.find(filter);
+    const categories = await CategoryPlan.find(filter).sort({ order: 1 });
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ msg: "Erro ao buscar categorias", error: error.message });
+  }
+};
+
+// PATCH - Reordenar categorias
+exports.reorderCategories = async (req, res) => {
+  try {
+    const items = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ msg: "Body deve ser um array de { id, order }" });
+    }
+
+    const invalid = items.some(({ id, order }) => !id || typeof order !== 'number');
+    if (invalid) {
+      return res.status(400).json({ msg: "Cada item deve ter 'id' (string) e 'order' (número)" });
+    }
+
+    const bulkOps = items.map(({ id, order }) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { order } },
+      },
+    }));
+
+    await CategoryPlan.bulkWrite(bulkOps);
+    res.status(200).json({ msg: "Ordem das categorias atualizada com sucesso" });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro ao reordenar categorias", error: error.message });
   }
 };
 
