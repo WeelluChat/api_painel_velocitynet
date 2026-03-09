@@ -109,7 +109,7 @@ exports.categoryPlanCreateCard = async (req, res) => {
     }));
 
     await CategoryPlan.updateOne(
-      { _id: idCategory, isVisible: true},
+      { _id: idCategory },
       { $push: { images: { $each: imageObjects } } }
     );
 
