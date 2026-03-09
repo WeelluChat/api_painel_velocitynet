@@ -101,6 +101,7 @@ exports.atualizarPlanoViaBody = async (req, res) => {
   try {
     const { planoId, ...updateData } = req.body;
     delete updateData.comboId;
+    delete updateData.id; // prevent storing Mongoose virtual as a plain field
 
     const plano = await Plano.findByIdAndUpdate(
       planoId,
@@ -171,6 +172,74 @@ exports.atualizarImagemBeneficio = async (req, res) => {
     await plano.save();
 
     res.status(200).json({ msg: "Imagem do benefício atualizada com sucesso", beneficio: beneficio.toObject() });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+// --- Relational endpoints (panel use) ---
+
+exports.getCombosLight = async (req, res) => {
+  try {
+    const combos = await Combo.find().select("title isVisible planos");
+    const result = combos.map((c) => ({
+      _id: c._id,
+      title: c.title,
+      isVisible: c.isVisible,
+      planoCount: c.planos.length,
+    }));
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+exports.getComboById = async (req, res) => {
+  try {
+    const combo = await Combo.findById(req.params.id).select("title isVisible planos");
+    if (!combo) return res.status(404).json({ msg: "Combo não encontrado" });
+    res.status(200).json({
+      _id: combo._id,
+      title: combo.title,
+      isVisible: combo.isVisible,
+      planoCount: combo.planos.length,
+    });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+exports.getPlanosByComboId = async (req, res) => {
+  try {
+    const combo = await Combo.findById(req.params.id).select("planos");
+    if (!combo) return res.status(404).json({ msg: "Combo não encontrado" });
+
+    const planos = await Plano.aggregate([
+      { $match: { _id: { $in: combo.planos } } },
+      {
+        $project: {
+          nome: 1,
+          isVisible: 1,
+          velocidade: 1,
+          valor: 1,
+          idCombo: 1,
+          beneficioCount: { $size: "$beneficios" },
+          detalheCount: { $size: "$detalhes" },
+        },
+      },
+    ]);
+
+    res.status(200).json(planos);
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+exports.getPlanoById = async (req, res) => {
+  try {
+    const plano = await Plano.findById(req.params.id);
+    if (!plano) return res.status(404).json({ msg: "Plano não encontrado" });
+    res.status(200).json(plano);
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
   }

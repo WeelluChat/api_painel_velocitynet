@@ -4,7 +4,15 @@ const checkToken = require("../middleware/checktoken");
 
 const router = Router();
 
+// Legacy endpoint (used by public website – do not remove)
 router.get("/planos", MontarController.combosGet);
+
+// Relational endpoints for the panel
+router.get("/combos", MontarController.getCombosLight);
+router.get("/combos/:id", MontarController.getComboById);
+router.get("/combos/:id/planos", MontarController.getPlanosByComboId);
+router.get("/planos/:id", MontarController.getPlanoById);
+
 router.post("/criarPlanos", checkToken, MontarController.combosPost);
 router.put("/atualizarPlanos/:id", checkToken, MontarController.combosPut);
 router.delete("/deletarPlanos/:id", checkToken, MontarController.combosDelete);
