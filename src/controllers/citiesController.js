@@ -10,7 +10,6 @@ exports.seedCities = async () => {
   const count = await City.countDocuments();
   if (count === 0) {
     await City.insertMany(INITIAL_CITIES);
-    console.log("[Cities] Cidades iniciais criadas:", INITIAL_CITIES.map((c) => c.name).join(", "));
   }
 };
 
@@ -20,7 +19,9 @@ exports.getCities = async (req, res) => {
     const cities = await City.find({});
     res.status(200).json(cities);
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao buscar cidades", error: error.message });
+    res
+      .status(500)
+      .json({ msg: "Erro ao buscar cidades", error: error.message });
   }
 };
 
@@ -36,7 +37,9 @@ exports.createCity = async (req, res) => {
     res.status(201).json(city);
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ msg: "Slug já existe", error: error.message });
+      return res
+        .status(409)
+        .json({ msg: "Slug já existe", error: error.message });
     }
     res.status(500).json({ msg: "Erro ao criar cidade", error: error.message });
   }
@@ -49,12 +52,14 @@ exports.updateCity = async (req, res) => {
     const city = await City.findByIdAndUpdate(
       req.params.id,
       { $set: { name, slug, isActive } },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     if (!city) return res.status(404).json({ msg: "Cidade não encontrada" });
     res.status(200).json(city);
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao atualizar cidade", error: error.message });
+    res
+      .status(500)
+      .json({ msg: "Erro ao atualizar cidade", error: error.message });
   }
 };
 
@@ -65,6 +70,8 @@ exports.deleteCity = async (req, res) => {
     if (!city) return res.status(404).json({ msg: "Cidade não encontrada" });
     res.status(200).json({ msg: "Cidade deletada com sucesso" });
   } catch (error) {
-    res.status(500).json({ msg: "Erro ao deletar cidade", error: error.message });
+    res
+      .status(500)
+      .json({ msg: "Erro ao deletar cidade", error: error.message });
   }
 };
