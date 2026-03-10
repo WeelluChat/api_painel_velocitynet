@@ -12,7 +12,8 @@ const app = express();
 app.set("etag", false);
 
 const corsOptions = {
-  origin: ["https://painel.velocitynet.com.br", "https://velocitynet.com.br"],
+  // origin: ["https://painel.velocitynet.com.br", "https://velocitynet.com.br"],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };

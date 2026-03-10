@@ -17,6 +17,7 @@ router.use("/rotating-banner", require("./rotatingBanner.routes"));
 router.use("/membership", require("./membership.routes"));
 router.use("/cities", require("./cities.routes"));
 router.use("/app-config", require("./appConfig.routes"));
+router.use("/public", require("./public.routes"));
 
 
 module.exports = router;
