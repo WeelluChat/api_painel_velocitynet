@@ -19,29 +19,30 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.authRegister = async (req, res) => {
-  const { email, password } = req.body;
+// exports.authRegister = async (req, res) => {
+//   const { email, password } = req.body;
 
-  if (!email) {
-    return res.status(422).json({ msg: "O email é obrigatório" });
-  }
+//   if (!email) {
+//     return res.status(422).json({ msg: "O email é obrigatório" });
+//   }
 
-  if (!password) {
-    return res.status(422).json({ msg: "A senha é obrigatória" });
-  }
+//   if (!password) {
+//     return res.status(422).json({ msg: "A senha é obrigatória" });
+//   }
 
-  try {
-    const salt = await bcrypt.genSalt(12);
-    const passwordHash = await bcrypt.hash(password, salt);
-    const user = new User({ email, password: passwordHash });
-    await user.save();
-    res.status(201).json({ msg: "Usuário criado com sucesso" });
-  } catch (error) {
-    res.status(500).json({ msg: "Erro no servidor" });
-  }
-};
+//   try {
+//     const salt = await bcrypt.genSalt(12);
+//     const passwordHash = await bcrypt.hash(password, salt);
+//     const user = new User({ email, password: passwordHash });
+//     await user.save();
+//     res.status(201).json({ msg: "Usuário criado com sucesso" });
+//   } catch (error) {
+//     res.status(500).json({ msg: "Erro no servidor" });
+//   }
+// };
 
-const DUMMY_HASH = "$2b$12$invalidhashfortimingprotectionxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+const DUMMY_HASH =
+  "$2b$12$invalidhashfortimingprotectionxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 exports.authLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -56,7 +57,10 @@ exports.authLogin = async (req, res) => {
       return res.status(401).json({ msg: "Credenciais inválidas" });
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET);
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.SECRET,
+    );
     res.status(200).json({ msg: "Autenticação realizada com sucesso", token });
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
