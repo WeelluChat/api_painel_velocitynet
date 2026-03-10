@@ -22,6 +22,7 @@ router.put("/atualizarBeneficio", checkToken, MontarController.atualizarBenefici
 router.put("/atualizarDetalhe", checkToken, MontarController.atualizarDetalheViaBody);
 router.put("/beneficioImage", checkToken, MontarController.atualizarImagemBeneficio);
 router.patch("/combos/reorder", checkToken, MontarController.reorderCombos);
+router.patch("/combos/:comboId/planos/reorder", checkToken, MontarController.reorderPlanos);
 router.patch("/adicionarPlano", checkToken, MontarController.adicionarPlanoAoCombo);
 
 module.exports = router;

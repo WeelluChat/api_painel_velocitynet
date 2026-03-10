@@ -250,6 +250,44 @@ exports.categoryPlanDeleteCard = async (req, res) => {
   }
 };
 
+// PATCH - Reordenar imagens de uma categoria
+exports.reorderCategoryImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const items = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ msg: "Body deve ser um array de { id, order }" });
+    }
+
+    const invalid = items.some(({ id: imgId, order }) => !imgId || typeof order !== 'number');
+    if (invalid) {
+      return res.status(400).json({ msg: "Cada item deve ter 'id' (string) e 'order' (número)" });
+    }
+
+    const categoria = await CategoryPlan.findById(id);
+    if (!categoria) {
+      return res.status(404).json({ msg: "Categoria não encontrada." });
+    }
+
+    const orderMap = new Map(items.map(({ id: imgId, order }) => [imgId, order]));
+    categoria.images = categoria.images.map((img) => {
+      const newOrder = orderMap.get(img._id.toString());
+      if (newOrder !== undefined) {
+        img.order = newOrder;
+      }
+      return img;
+    });
+
+    categoria.images.sort((a, b) => a.order - b.order);
+    categoria.markModified('images');
+    await categoria.save();
+    res.status(200).json({ msg: "Ordem das imagens atualizada com sucesso" });
+  } catch (error) {
+    res.status(500).json({ msg: "Erro ao reordenar imagens", error: error.message });
+  }
+};
+
 // PATCH - Alterar isVisible de uma imagem específica
 exports.categoryVisibility = async (req, res) => {
   const { idCategoria, nomeImagem } = req.params;

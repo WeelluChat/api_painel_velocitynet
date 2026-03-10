@@ -257,6 +257,7 @@ exports.getPlanosByComboId = async (req, res) => {
         $project: {
           nome: 1,
           isVisible: 1,
+          order: 1,
           velocidade: 1,
           valor: 1,
           idCombo: 1,
@@ -264,9 +265,38 @@ exports.getPlanosByComboId = async (req, res) => {
           detalheCount: { $size: "$detalhes" },
         },
       },
+      { $sort: { order: 1 } },
     ]);
 
     res.status(200).json(planos);
+  } catch (error) {
+    res.status(500).json({ msg: "Erro no servidor" });
+  }
+};
+
+exports.reorderPlanos = async (req, res) => {
+  try {
+    const { comboId } = req.params;
+    const items = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ msg: "Body deve ser um array de { id, order }" });
+    }
+
+    const invalid = items.some(({ id, order }) => !id || typeof order !== 'number');
+    if (invalid) {
+      return res.status(400).json({ msg: "Cada item deve ter 'id' (string) e 'order' (número)" });
+    }
+
+    const bulkOps = items.map(({ id, order }) => ({
+      updateOne: {
+        filter: { _id: id, idCombo: comboId },
+        update: { $set: { order } },
+      },
+    }));
+
+    await Plano.bulkWrite(bulkOps);
+    res.status(200).json({ msg: "Ordem dos planos atualizada com sucesso" });
   } catch (error) {
     res.status(500).json({ msg: "Erro no servidor" });
   }

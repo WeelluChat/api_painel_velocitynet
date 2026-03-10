@@ -22,6 +22,7 @@ const PlanoSchema = new mongoose.Schema({
     idCombo: String,
     nome: { type: String, required: true },
     isVisible: { type: Boolean, default: true },
+    order: { type: Number, default: 0 },
     velocidade: { type: Number, required: true },
     valor: { type: Number, required: true },
     beneficios: [Beneficio],
