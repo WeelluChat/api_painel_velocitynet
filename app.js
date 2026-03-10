@@ -12,7 +12,7 @@ const app = express();
 app.set("etag", false);
 
 const corsOptions = {
-  origin: "*",
+  origin: ["https://painel.velocitynet.com.br", "https://velocitynet.com.br"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -30,7 +30,9 @@ app.use("/api/v1", routes);
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
+  res
+    .status(err.status || 500)
+    .json({ error: err.message || "Internal Server Error" });
 });
 
 const PORT = process.env.PORT || 3000;
