@@ -21,6 +21,10 @@ const membershipSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  buttonText: {
+    type: String,
+    required: true,
+  },
   enabled: {
     type: Boolean,
     default: true,

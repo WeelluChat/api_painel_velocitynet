@@ -15,15 +15,16 @@ exports.membershipGet = async (req, res) => {
 
 // PUT - cria ou atualiza o membership (upsert - apenas 1 documento)
 exports.membershipPut = async (req, res) => {
-  const { image, title, description, redirectUrl, color, enabled } = req.body;
+  const { image, title, description, redirectUrl, color, buttonText, enabled } = req.body;
 
   if (!image) return res.status(422).json({ msg: "Campo 'image' é obrigatório" });
   if (!title) return res.status(422).json({ msg: "Campo 'title' é obrigatório" });
   if (!description) return res.status(422).json({ msg: "Campo 'description' é obrigatório" });
   if (!redirectUrl) return res.status(422).json({ msg: "Campo 'redirectUrl' é obrigatório" });
   if (!color) return res.status(422).json({ msg: "Campo 'color' é obrigatório" });
+  if (!buttonText) return res.status(422).json({ msg: "Campo 'buttonText' é obrigatório" });
 
-  const updateData = { image, title, description, redirectUrl, color };
+  const updateData = { image, title, description, redirectUrl, color, buttonText };
   if (enabled !== undefined) updateData.enabled = enabled;
 
   try {
